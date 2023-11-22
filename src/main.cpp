@@ -1,18 +1,14 @@
-#include <Arduino.h>
+#include <Adafruit_ILI9341.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#define TFT_DC 9
+#define TFT_CS 10
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
-}
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+int main(void)
+{
+  tft.begin();
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_BLACK);
+  tft.fillCircle(25, 25, 25, ILI9341_BLUE);
 }
