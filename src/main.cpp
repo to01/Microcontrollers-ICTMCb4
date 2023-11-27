@@ -1,18 +1,24 @@
 #include <Arduino.h>
+#include "Nunchuk.h"
+#include "Wire.h"
 
-// put function declarations here:
-int myFunction(int, int);
+#define BAUDRATE	9600
+#define CHUNKSIZE	32
+#define BUFFERLEN	256
+#define NUNCHUK_ADDRESS 0x52
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
-}
-
-void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+int main(void)
+{
+  init();
+  NunChuk Nunchuk;
+  Wire.begin();
+  Nunchuk.begin(NUNCHUK_ADDRESS);
+  Serial.begin(9600);
+  while(1)
+  {
+    Nunchuk.getState(NUNCHUK_ADDRESS);
+    Serial.print(Nunchuk.state.joy_y_axis);
+    Serial.print("  ");
+    Serial.println(Nunchuk.state.joy_x_axis);
+  }
 }
