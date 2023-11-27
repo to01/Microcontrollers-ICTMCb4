@@ -30,12 +30,16 @@ ISR(TIMER0_COMPA_vect) {
   }
 }
 
-void sendSignal() {
+volatile void sendSignal() {
   if (toggleCount >= 1000) {
     toggleCount = 0;
   } else {
     sendSignal(); // not sure if this is a good idea but it's fine for now
   }
+}
+
+ISR(PCINT1_vect) {
+  sendSignal();
 }
 
 void toggleSegmentDisplay(void) {
@@ -50,13 +54,6 @@ void toggleSegmentDisplay(void) {
   Wire.endTransmission();
 }
 
-void segmentDisplaySetup(void) {
-  Wire.begin();
-  Wire.beginTransmission(SEVENSEGMENTADDR);
-  Wire.write(OFF);
-  Wire.endTransmission();
-}
-
 void timerSetup(void) {
   TIMSK0 |= (1<<OCIE0A); // enable comp match a interrupt
   TCCR0A |= (1<<WGM01); // CTC-mode
@@ -64,8 +61,22 @@ void timerSetup(void) {
   TCCR0B |= (1<<CS00); // no prescaler
 }
 
+void buttonSetup(void) {
+  PORTD |= (1<<PORTC1);
+  PCICR |= (1<<PCIE1);
+  PCMSK1 |= (1<<PCINT9);
+}
+
+void segmentDisplaySetup(void) {
+  Wire.begin();
+  Wire.beginTransmission(SEVENSEGMENTADDR);
+  Wire.write(OFF);
+  Wire.endTransmission();
+}
+
 int main(void) {
   timerSetup();
+  buttonSetup();
   EIMSK |= (1<<INT0); // enable external INT0 interrupts
   // EICRA |= (1<<ISC00); // interrupt on any logical change
   EICRA |= (1<<ISC01); // interrupt on falling edge
