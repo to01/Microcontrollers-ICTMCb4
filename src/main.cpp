@@ -1,6 +1,5 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/delay.h>
 #include <Wire.h>
 
 #define ON 0
@@ -11,7 +10,7 @@
 volatile bool segmentUpdateStatus = 0;
 
 ISR(INT0_vect) {
-  segmentUpdateStatus = 1;
+  segmentUpdateStatus = !segmentUpdateStatus;
 }
 
 volatile int toggleCount = TOGGLENUMBER;
