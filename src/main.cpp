@@ -31,22 +31,22 @@ int main(void)
   while (1)
   {
     Nunchuk.getState(NUNCHUK_ADDRESS);
-    if (Nunchuk.state.joy_x_axis > 128)
+    if (Nunchuk.state.joy_y_axis > 128)
     {
       tft.fillCircle(posX, posY, 5, ILI9341_BLACK);
       tft.fillCircle(posX += 0.5, posY, 5, ILI9341_BLUE);
     }
-    else if (Nunchuk.state.joy_x_axis < 128)
+    else if (Nunchuk.state.joy_y_axis < 128)
     {
       tft.fillCircle(posX, posY, 5, ILI9341_BLACK);
       tft.fillCircle(posX -= 0.5, posY, 5, ILI9341_BLUE);
     }
-    else if (Nunchuk.state.joy_y_axis > 128)
+    else if (Nunchuk.state.joy_x_axis > 128)
     {
       tft.fillCircle(posX, posY, 5, ILI9341_BLACK);
       tft.fillCircle(posX, posY += 0.5, 5, ILI9341_BLUE);
     }
-    else if (Nunchuk.state.joy_y_axis < 128)
+    else if (Nunchuk.state.joy_x_axis < 128)
     {
       tft.fillCircle(posX, posY, 5, ILI9341_BLACK);
       tft.fillCircle(posX, posY -= 0.5, 5, ILI9341_BLUE);
