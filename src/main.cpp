@@ -5,6 +5,7 @@
 
 #define ON 0
 #define OFF 0b11111111
+#define SEVENSEGMENTADDR 0x21
 
 volatile bool segmentUpdateStatus = 0;
 
@@ -39,7 +40,7 @@ void sendSignal() {
 
 void toggleSegmentDisplay(void) {
   static bool currentStatus = 0;
-  Wire.beginTransmission(0x21);
+  Wire.beginTransmission(SEVENSEGMENTADDR);
   if (currentStatus) {
     Wire.write(OFF);
   } else {
@@ -51,6 +52,7 @@ void toggleSegmentDisplay(void) {
 
 void segmentDisplaySetup(void) {
   Wire.begin();
+  Wire.beginTransmission(SEVENSEGMENTADDR);
   Wire.write(OFF);
   Wire.endTransmission();
 }
@@ -63,13 +65,13 @@ void timerSetup(void) {
 }
 
 int main(void) {
-  segmentDisplaySetup();
   timerSetup();
   EIMSK |= (1<<INT0); // enable external INT0 interrupts
   // EICRA |= (1<<ISC00); // interrupt on any logical change
   EICRA |= (1<<ISC01); // interrupt on falling edge
   DDRD |= (1<<DDD6); // set IR pin output
   sei();
+  segmentDisplaySetup();
   while (1) {
     if (segmentUpdateStatus) {
       toggleSegmentDisplay();
