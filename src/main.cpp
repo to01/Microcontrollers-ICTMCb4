@@ -6,6 +6,7 @@
 #define ON 0
 #define OFF 0b11111111
 #define SEVENSEGMENTADDR 0x21
+#define TOGGLENUMBER 10
 
 volatile bool segmentUpdateStatus = 0;
 
@@ -13,28 +14,18 @@ ISR(INT0_vect) {
   segmentUpdateStatus = 1;
 }
 
-volatile int toggleCount = 1000;
-// volatile int waitCount = 0;
+volatile int toggleCount = TOGGLENUMBER;
 
 ISR(TIMER0_COMPA_vect) {
-  if (toggleCount < 1000) {
+  if (toggleCount < TOGGLENUMBER) {
     PORTD ^= (1<<PORTD6);
     toggleCount++;
-  // } else {
-  //   PORTD &= ~(1<<PORTD6);
-  //   waitCount++;
-  //   if (waitCount > 30000) {
-  //     toggleCount = 0;
-  //     waitCount = 0;
-  //   }
   }
 }
 
 volatile void sendSignal() {
-  if (toggleCount >= 1000) {
+  if (toggleCount >= TOGGLENUMBER) {
     toggleCount = 0;
-  } else {
-    sendSignal(); // not sure if this is a good idea but it's fine for now
   }
 }
 
@@ -78,7 +69,6 @@ int main(void) {
   timerSetup();
   buttonSetup();
   EIMSK |= (1<<INT0); // enable external INT0 interrupts
-  // EICRA |= (1<<ISC00); // interrupt on any logical change
   EICRA |= (1<<ISC01); // interrupt on falling edge
   DDRD |= (1<<DDD6); // set IR pin output
   sei();
