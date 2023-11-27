@@ -7,6 +7,8 @@
 #define BUFFERLEN	256
 #define NUNCHUK_ADDRESS 0x52
 
+volatile bool previousButtonState = 0;
+
 int main(void)
 {
   init();
@@ -17,8 +19,10 @@ int main(void)
   while(1)
   {
     Nunchuk.getState(NUNCHUK_ADDRESS);
-    Serial.print(Nunchuk.state.joy_y_axis);
-    Serial.print("  ");
-    Serial.println(Nunchuk.state.joy_x_axis);
+    if(previousButtonState != Nunchuk.state.c_button)
+    {
+      //execute something when c is pressed here
+    }
+    previousButtonState = Nunchuk.state.c_button;
   }
 }
