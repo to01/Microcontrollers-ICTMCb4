@@ -13,7 +13,7 @@ ISR(INT0_vect) {
   segmentUpdateStatus = 1;
 }
 
-volatile int toggleCount = 0;
+volatile int toggleCount = 1000;
 // volatile int waitCount = 0;
 
 ISR(TIMER0_COMPA_vect) {
