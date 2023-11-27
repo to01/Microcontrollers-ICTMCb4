@@ -10,5 +10,12 @@ int main(void)
   tft.begin();
 
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_BLACK);
-  tft.fillCircle(25, 25, 25, ILI9341_BLUE);
+
+  for (int i = 0; i < 150; i++)
+  {
+    tft.fillCircle(25 + i - 4, 25 + i - 4, 5, ILI9341_BLACK);
+    tft.fillCircle(25 + i, 25 + i, 5, ILI9341_BLUE);
+    _delay_ms(150);
+    i += 3;
+  }
 }
