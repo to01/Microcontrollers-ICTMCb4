@@ -59,22 +59,23 @@ void timerSetup(void)
   TCCR0B |= (1 << CS00);   // no prescaler
 }
 
-int main(void)
+void setup(void)
 {
   timerSetup();
   sei();
   tft.begin();
-  NunChuk Nunchuk;
   Wire.begin();
-  Nunchuk.begin(NUNCHUK_ADDRESS);
+}
+
+int main(void)
+{
+  setup();
   uint16_t posX = ILI9341_TFTWIDTH / 2;
   uint16_t posY = ILI9341_TFTHEIGHT / 2;
   uint16_t *posXp = &posX;
   uint16_t *posYp = &posY;
-
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
-
   while (1)
   {
     if (ticksSinceLastUpdate > 380) // 100FPS
