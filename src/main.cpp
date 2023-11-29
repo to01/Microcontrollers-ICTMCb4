@@ -11,7 +11,8 @@
 
 // defines for nunchuk
 #define NUNCHUK_ADDRESS 0x52
-volatile bool previousButtonState = 0; // wat doet dit???
+
+volatile bool previousButtonState = 0; // hold the previous buttonstate from the Cbutton of the nunchuk
 
 volatile bool segmentUpdateStatus = 0; // decides the 7-segment display should be updated. (AKA toggled)
 
@@ -67,6 +68,17 @@ void toggleSegmentDisplay(void)
   Wire.endTransmission();
 }
 
+void getNunchukState(void)
+{
+  Nunchuk.getState(NUNCHUK_ADDRESS);
+  if(Nunchuk.state.c_button != previousButtonState)
+  {
+    PORTD ^= (1 << PD7);
+    sendSignal();
+    previousButtonState = !previousButtonState;
+  }
+}
+
 /*
   Starts timer in CTC-mode to be used in IR communication
 */
@@ -76,15 +88,6 @@ void timerSetup(void)
   TCCR0A |= (1 << WGM01);  // CTC-mode
   OCR0A = 210;             // set TOP to 210
   TCCR0B |= (1 << CS00);   // no prescaler
-}
-
-/*
-  TODO describe this function
-*/
-void nunchukSetup(void)
-{
-  NunChuk nunchuk;
-  nunchuk.begin(NUNCHUK_ADDRESS);
 }
 
 /*
@@ -110,25 +113,21 @@ void segmentDisplaySetup(void)
 
 int main(void)
 {
-  nunchukSetup();
   timerSetup();
   IRSetup();
-  segmentDisplaySetup();
   sei(); // enable global interrupts
+  DDRD |= (1 << DDD7);
+  Nunchuk.begin(NUNCHUK_ADDRESS);
+  segmentDisplaySetup();
 
   while (1)
   {
-    Nunchuk.getState(NUNCHUK_ADDRESS);
-    if (previousButtonState != Nunchuk.state.c_button)
-    {
-      sendSignal();
-    }
     if (segmentUpdateStatus)
     {
+      toggleSegmentDisplay();
       segmentUpdateStatus = 0;
-      toggleSegmentDisplay(); // not sure whether this should be before or after setting segmentUpdateStatus to 0.
-      // I guess we'll see...
     }
+    getNunchukState();
   }
   return 0;
 }
