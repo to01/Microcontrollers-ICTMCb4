@@ -3,5 +3,4 @@
 include
 lib
 test
-platformio.ini
 README.md
