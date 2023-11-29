@@ -52,7 +52,7 @@ void timerSetup(void) {
 }
 
 void buttonSetup(void) {
-  PORTD |= (1<<PORTC1);
+  PORTC |= (1<<PORTC1);
   PCICR |= (1<<PCIE1);
   PCMSK1 |= (1<<PCINT9);
 }
