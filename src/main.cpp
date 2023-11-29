@@ -14,6 +14,13 @@ volatile bool previousButtonState = 0;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
+volatile uint16_t ticksSinceLastUpdate = 0;
+
+ISR(TIMER0_COMPA_vect)
+{
+  ticksSinceLastUpdate++;
+}
+
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
   tft.fillCircle(*posXp, *posYp, RADIUS_PLAYER, ILI9341_WHITE);
@@ -40,27 +47,39 @@ void updateDisplay(uint16_t *posXp, uint16_t *posYp)
   }
 
   tft.fillCircle(*posXp, *posYp, RADIUS_PLAYER, ILI9341_BLUE);
-  _delay_ms(10); // 100FPS
+}
+
+void timerSetup(void)
+{
+  TIMSK0 |= (1 << OCIE0A); // enable comp match a interrupt
+  TCCR0A |= (1 << WGM01);  // CTC-mode
+  OCR0A = 210;             // set TOP to 210
+  TCCR0B |= (1 << CS00);   // no prescaler
 }
 
 int main(void)
 {
-  init();
+  timerSetup();
+  sei();
   tft.begin();
   NunChuk Nunchuk;
   Wire.begin();
   Nunchuk.begin(NUNCHUK_ADDRESS);
   uint16_t posX = ILI9341_TFTWIDTH / 2;
   uint16_t posY = ILI9341_TFTHEIGHT / 2;
-  uint16_t* posXp = &posX;
-  uint16_t* posYp = &posY;
+  uint16_t *posXp = &posX;
+  uint16_t *posYp = &posY;
 
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
 
   while (1)
   {
-    updateDisplay(posXp, posYp);
+    if (ticksSinceLastUpdate > 380) // 100FPS
+    {
+      updateDisplay(posXp, posYp);
+      ticksSinceLastUpdate = 0;
+    }
   }
   return 0;
 }
