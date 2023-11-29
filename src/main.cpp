@@ -93,16 +93,21 @@ void setup(void)
   segmentDisplaySetup();
 }
 
+void updateSegmentDisplay(void)
+{
+  if (segmentUpdateStatus)
+  {
+    toggleSegmentDisplay();
+    segmentUpdateStatus = 0;
+  }
+}
+
 int main(void)
 {
   setup();
   while (1)
   {
-    if (segmentUpdateStatus)
-    {
-      toggleSegmentDisplay();
-      segmentUpdateStatus = 0;
-    }
+    updateSegmentDisplay();
   }
   return 0;
 }
