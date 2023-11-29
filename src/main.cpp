@@ -23,7 +23,8 @@ ISR(TIMER0_COMPA_vect)
 
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
-  tft.fillCircle(*posXp, *posYp, RADIUS_PLAYER, ILI9341_WHITE);
+  uint16_t oldPosX = *posXp;
+  uint16_t oldPosY = *posYp;
   Nunchuk.getState(NUNCHUK_ADDRESS);
   *posXp += (Nunchuk.state.joy_y_axis - 127) / 32;
   *posYp += (Nunchuk.state.joy_x_axis - 127) / 32;
@@ -46,6 +47,7 @@ void updateDisplay(uint16_t *posXp, uint16_t *posYp)
     *posYp = ILI9341_TFTHEIGHT - RADIUS_PLAYER - 1;
   }
 
+  tft.fillCircle(oldPosX, oldPosY, RADIUS_PLAYER, ILI9341_WHITE);
   tft.fillCircle(*posXp, *posYp, RADIUS_PLAYER, ILI9341_BLUE);
 }
 
