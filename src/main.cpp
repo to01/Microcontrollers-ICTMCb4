@@ -71,10 +71,8 @@ void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 
 volatile void sendSignal()
 {
-  if (toggleCount >= TOGGLENUMBER)
-  {
-    toggleCount = 0;
-  }
+  while (toggleCount<TOGGLENUMBER);
+  toggleCount = 0;
 }
 
 ISR(PCINT1_vect)
