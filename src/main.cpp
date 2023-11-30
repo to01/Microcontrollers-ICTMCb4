@@ -41,28 +41,37 @@ ISR(TIMER0_COMPA_vect)
 
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
+  static int i = 0;
+  static int j = 180;
+  tft.setCursor(0,0);
+  tft.print(j);
+  i++;
+  if (i>=100) {
+    j--;
+    i = 0;
+  }
   uint16_t oldPosX = *posXp;
   uint16_t oldPosY = *posYp;
   Nunchuk.getState(NUNCHUK_ADDRESS);
-  *posXp += (Nunchuk.state.joy_y_axis - 127) / 32;
-  *posYp += (Nunchuk.state.joy_x_axis - 127) / 32;
+  *posXp += (Nunchuk.state.joy_x_axis - 127) / 32;
+  *posYp -= (Nunchuk.state.joy_y_axis - 127) / 32;
 
   if (*posXp < RADIUS_PLAYER)
   {
     *posXp = RADIUS_PLAYER;
   }
-  else if (*posXp > ILI9341_TFTWIDTH - RADIUS_PLAYER - 1)
+  else if (*posXp > ILI9341_TFTHEIGHT - RADIUS_PLAYER - 1)
   {
-    *posXp = ILI9341_TFTWIDTH - RADIUS_PLAYER - 1;
+    *posXp = ILI9341_TFTHEIGHT - RADIUS_PLAYER - 1;
   }
 
   if (*posYp < RADIUS_PLAYER)
   {
     *posYp = RADIUS_PLAYER;
   }
-  else if (*posYp > ILI9341_TFTHEIGHT - RADIUS_PLAYER - 1)
+  else if (*posYp > ILI9341_TFTWIDTH - RADIUS_PLAYER - 1)
   {
-    *posYp = ILI9341_TFTHEIGHT - RADIUS_PLAYER - 1;
+    *posYp = ILI9341_TFTWIDTH - RADIUS_PLAYER - 1;
   }
 
   tft.fillCircle(oldPosX, oldPosY, RADIUS_PLAYER, ILI9341_WHITE);
@@ -155,11 +164,16 @@ int main(void)
   uint16_t *posXp = &posX;
   uint16_t *posYp = &posY;
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
+  tft.setRotation(1);
+  // tft.drawChar(ILI9341_TFTHEIGHT/2, 0, '5', ILI9341_BLACK, ILI9341_WHITE, 3);
+  tft.setCursor(0,0);
+  tft.setTextColor(ILI9341_BLACK, ILI9341_WHITE);
+  tft.setTextSize(2);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
   while (1)
   {
     updateSegmentDisplay();
-    if (ticksSinceLastUpdate > 380) // 100FPS
+    if (ticksSinceLastUpdate >= 380) // 100FPS
     {
       updateDisplay(posXp, posYp);
       ticksSinceLastUpdate = 0;
