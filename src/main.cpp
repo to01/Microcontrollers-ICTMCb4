@@ -7,38 +7,46 @@
 #define ON 0
 #define OFF 0b11111111
 #define SEVENSEGMENTADDR 0x21
-#define TOGGLENUMBER 10
+#define TOGGLENUMBER 10 //add comment here
 #define TFT_DC 9
 #define TFT_CS 10
 #define BAUDRATE 9600
-#define CHUNKSIZE 32
-#define BUFFERLEN 256
 #define NUNCHUK_ADDRESS 0x52
 #define RADIUS_PLAYER 5
 
+ //add comment here, what is TFT? and what are TFT_CS and DC?
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 volatile uint16_t ticksSinceLastUpdate = 0;
 
-volatile bool segmentUpdateStatus = 0;
+//volatile bool segmentUpdateStatus = 0; //no longer used
 
-ISR(INT0_vect)
-{
-  segmentUpdateStatus = !segmentUpdateStatus;
-}
+volatile bool previousCButtonState = 0; //used to store the state of the nunchuck Cbutton
 
-volatile int toggleCount = TOGGLENUMBER;
+//removed ISR(INT0). segmentUpdate is no longer used
+//removed ISR(PCINT1_vect) because we no longer use the gameshield button
+
+volatile int toggleCount = TOGGLENUMBER; //what does this do?
 
 ISR(TIMER0_COMPA_vect)
 {
   if (toggleCount < TOGGLENUMBER)
   {
-    PORTD ^= (1 << PORTD6);
+    PORTD ^= (1 << PORTD6); //toggle IR pin
     toggleCount++;
   }
   ticksSinceLastUpdate++;
 }
 
+/*  NOTE:
+  this function includes Nunchuk.getState.
+  should this be called every so many frames? or should getState be in the main loop?
+  currently, i use this getState to update the 7seg in updateSegmentDisplay()
+*/
+
+/*
+  update the position of the pawn on the lcd screen
+*/
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
   uint16_t oldPosX = *posXp;
@@ -69,17 +77,13 @@ void updateDisplay(uint16_t *posXp, uint16_t *posYp)
   tft.fillCircle(*posXp, *posYp, RADIUS_PLAYER, ILI9341_BLUE);
 }
 
+//comment here
 volatile void sendSignal()
 {
   if (toggleCount >= TOGGLENUMBER)
   {
     toggleCount = 0;
   }
-}
-
-ISR(PCINT1_vect)
-{
-  sendSignal();
 }
 
 void toggleSegmentDisplay(void)
@@ -106,13 +110,6 @@ void timerSetup(void)
   TCCR0B |= (1 << CS00);   // no prescaler
 }
 
-void buttonSetup(void)
-{
-  PORTC |= (1 << PORTC1);
-  PCICR |= (1 << PCIE1);
-  PCMSK1 |= (1 << PCINT9);
-}
-
 void IRSetup(void)
 {
   EIMSK |= (1 << INT0);  // enable external INT0 interrupts
@@ -120,6 +117,9 @@ void IRSetup(void)
   DDRD |= (1 << DDD6);   // set IR pin output
 }
 
+/*
+  Will ensure the 7seg display starts OFF
+*/
 void segmentDisplaySetup(void)
 {
   Wire.begin();
@@ -131,20 +131,22 @@ void segmentDisplaySetup(void)
 void setup(void)
 {
   timerSetup();
-  buttonSetup();
   IRSetup();
   sei();
   segmentDisplaySetup();
   tft.begin();
 }
 
+/*
+  if the C button on the nunchuk was pressed or released then toggle the 7seg display
+*/
 void updateSegmentDisplay(void)
 {
-  if (segmentUpdateStatus)
+  if (Nunchuk.state.c_button != previousCButtonState)
   {
     toggleSegmentDisplay();
-    segmentUpdateStatus = 0;
   }
+  previousCButtonState = Nunchuk.state.c_button;
 }
 
 int main(void)
@@ -165,5 +167,5 @@ int main(void)
       ticksSinceLastUpdate = 0;
     }
   }
-  return 0;
+  return 0; //unreached
 }
