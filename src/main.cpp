@@ -42,13 +42,14 @@ ISR(TIMER0_COMPA_vect)
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
   static int i = 0;
-  static int j = 180;
+  static int j = 120;
   i++;
   if (i>=100) {
     j--;
     i = 0;
     tft.setCursor(0,0);
     tft.print(j);
+    tft.print("   ");
   }
   uint16_t oldPosX = *posXp;
   uint16_t oldPosY = *posYp;
