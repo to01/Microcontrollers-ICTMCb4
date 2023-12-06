@@ -43,12 +43,12 @@ void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
   static int i = 0;
   static int j = 180;
-  tft.setCursor(0,0);
-  tft.print(j);
   i++;
   if (i>=100) {
     j--;
     i = 0;
+    tft.setCursor(0,0);
+    tft.print(j);
   }
   uint16_t oldPosX = *posXp;
   uint16_t oldPosY = *posYp;
@@ -159,8 +159,8 @@ void updateSegmentDisplay(void)
 int main(void)
 {
   setup();
-  uint16_t posX = ILI9341_TFTWIDTH / 2;
-  uint16_t posY = ILI9341_TFTHEIGHT / 2;
+  uint16_t posX = ILI9341_TFTHEIGHT / 2;
+  uint16_t posY = ILI9341_TFTWIDTH / 2;
   uint16_t *posXp = &posX;
   uint16_t *posYp = &posY;
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
