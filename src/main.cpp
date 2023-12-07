@@ -53,6 +53,7 @@ double calculateDistance(int x1, int y1, int x2, int y2)
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
+// Draws a triangle to calculate the direction end endpoint for the ball after a collision with a player
 void drawTriangleAfterCollision(int xBall, int yBall, int xPlayer, int yPlayer, bool cosinus)
 {
   if (cosinus)
@@ -61,7 +62,7 @@ void drawTriangleAfterCollision(int xBall, int yBall, int xPlayer, int yPlayer, 
     int xBK = calculateDistance(xPlayer, yPlayer, 240, yPlayer);
     double scale = xBK / xPB;
     int heigthTriangle = ((yBall - yPlayer) * scale) + yBall;
-    if (xPlayer <= xBall && yPlayer <= yBall)
+    if (xPlayer < xBall && yPlayer < yBall)
     {
       tft.drawTriangle(240, heigthTriangle, 240, yBall, xBall, yBall, ILI9341_GREEN);
     }
@@ -76,7 +77,7 @@ void drawTriangleAfterCollision(int xBall, int yBall, int xPlayer, int yPlayer, 
     int yBK = calculateDistance(xPlayer, yPlayer, xPlayer, 320);
     double scale = yBK / yPB;
     int heigthTriangle = ((xBall - xPlayer) * scale) + xBall;
-    if (xPlayer >= xBall && yPlayer <= yBall)
+    if (xPlayer > xBall && yPlayer < yBall)
     {
       tft.drawTriangle(heigthTriangle, 320, xBall, 320, xBall, yBall, ILI9341_ORANGE);
     }
@@ -156,8 +157,8 @@ void movePlayer(uint16_t *posXp, uint16_t *posYp)
   uint16_t oldPosXp = *posXp;
   uint16_t oldPosYp = *posYp;
   Nunchuk.getState(NUNCHUK_ADDRESS);
-  *posXp += (Nunchuk.state.joy_y_axis - 127) / 64;
-  *posYp += (Nunchuk.state.joy_x_axis - 127) / 64;
+  *posXp += (Nunchuk.state.joy_y_axis - 127) / 32;
+  *posYp += (Nunchuk.state.joy_x_axis - 127) / 32;
 
   if (*posXp < RADIUS_PLAYER)
   {
@@ -177,18 +178,9 @@ void movePlayer(uint16_t *posXp, uint16_t *posYp)
     *posYp = ILI9341_TFTHEIGHT - RADIUS_PLAYER - 1;
   }
 
-  /*if (player hits ball) {
-    ball moves in direction it is hit
-    moveBall(posX, posY, angle?, speed???);
-  }*/
-
   if (*posXp + RADIUS_PLAYER + RADIUS_BALL >= *posXb && *posXp - RADIUS_PLAYER - RADIUS_BALL <= *posXb && *posYp + RADIUS_PLAYER + RADIUS_BALL >= *posYb && *posYp - RADIUS_PLAYER - RADIUS_BALL <= *posYb)
   {
-    if (ticksSinceLastUpdate > 380) // 100FPS
-    {
       moveBall(posXp, posYp, posXb, posYb);
-      ticksSinceLastUpdate = 0;
-    }
   }
 
   tft.fillCircle(oldPosXp, oldPosYp, RADIUS_PLAYER, ILI9341_WHITE);
