@@ -47,64 +47,139 @@ ISR(TIMER0_COMPA_vect)
   ticksSinceLastUpdate++;
 }
 
+void moveBall(double xBall, double yBall, double xEnd, double yEnd, double angle)
+{
+  if (xEnd > xBall && yEnd > yBall)
+  {
+    // x omhoog
+    // y omhoog
+
+    if (yEnd > ILI9341_TFTHEIGHT)
+    {
+      // x = (y - b) / m
+      double m = (yBall - yEnd) / (xBall - xEnd);
+      double b = -(m * xEnd);
+      yEnd = ILI9341_TFTHEIGHT;
+      double ybMinus = (yEnd - b);
+      xEnd = (ybMinus / m) / 2;
+    }
+
+    tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_GREEN);
+  }
+  else if (xEnd < xBall && yEnd > yBall)
+  {
+    // x omlaag
+    // y omhoog
+
+    if (xEnd < 0)
+    {
+      // y = mx + b
+      double m = (yBall - yEnd) / (xBall - xEnd);
+      double b = -(m * xEnd);
+      xEnd = 0;
+      yEnd = b + ILI9341_TFTHEIGHT;
+    }
+
+    tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_ORANGE);
+  }
+  else if (xEnd > xBall && yEnd < yBall)
+  {
+    // x omhoog
+    // y omlaag
+
+    if (xEnd > ILI9341_TFTWIDTH)
+    {
+      // y = mx + b
+      double m = (yBall - yEnd) / (xBall - xEnd);
+      double b = -(m * xEnd);
+      xEnd = ILI9341_TFTWIDTH;
+      double mx = (m * xEnd);
+      yEnd = mx + b;
+    }
+
+    tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_DARKCYAN);
+  }
+  else if (xEnd < xBall && yEnd < yBall)
+  {
+    // x omlaag
+    // y omlaag
+
+    if (yEnd < 0)
+    {
+      // x = (y - b) / m
+      double m = (yBall - yEnd) / (xBall - xEnd);
+      double b = yEnd;
+      yEnd = 0;
+      double ybMinus = (yEnd - b);
+      xEnd = (ybMinus / m);
+    }
+
+    tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_BLACK);
+  }
+}
+
 // Calculates the distance between two coordinates
 double calculateDistance(int x1, int y1, int x2, int y2)
 {
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
-// Draws a triangle to calculate the direction end endpoint for the ball after a collision with a player
+// Draws a triangle to calculate the direction and endpoint for the ball after a collision with a player
 void drawTriangleAfterCollision(int xBall, int yBall, int xPlayer, int yPlayer, bool cosinus)
 {
+  double ballXplayerY = calculateDistance(xBall, yBall, xBall, yPlayer);
+  double playerXballX = calculateDistance(xPlayer, yPlayer, xBall, yBall);
+
+  double sinusCalc = asin(ballXplayerY / playerXballX);
+  double cosinusCalc = acos(ballXplayerY / playerXballX);
+
+  double angleSinus = sinusCalc * (180 / PI);
+  double angleCosinus = cosinusCalc * (180 / PI);
+
   if (cosinus)
   {
-    int xPB = calculateDistance(xPlayer, yPlayer, xBall, yPlayer);
-    int xBK = calculateDistance(xPlayer, yPlayer, 240, yPlayer);
-    double scale = xBK / xPB;
-    int heigthTriangle = ((yBall - yPlayer) * scale) + yBall;
-    if (xPlayer < xBall && yPlayer < yBall)
+    int xPB = calculateDistance(xPlayer, yPlayer, xBall, yPlayer); // calculates distance between x-cord player and x-cord ball
+    int xBK = calculateDistance(xPlayer, yPlayer, 240, yPlayer);   // calculates distance between x-cord player and wall
+    double scale = xBK / xPB;                                      // calculates scale for reference
+    int heigthTriangle = ((yBall - yPlayer) * scale) + yBall;      // calculates endpoint for ball to wall after collision with player
+    if (xPlayer <= xBall && yPlayer <= yBall)
     {
       tft.drawTriangle(240, heigthTriangle, 240, yBall, xBall, yBall, ILI9341_GREEN);
+      moveBall(xBall, yBall, 240, heigthTriangle, angleCosinus);
     }
     else
     {
-      tft.drawTriangle(0, heigthTriangle, 0, yBall, xBall, yBall, ILI9341_GREEN);
+      tft.drawTriangle(0, heigthTriangle, 0, yBall, xBall, yBall, ILI9341_BLACK);
+      moveBall(xBall, yBall, 0, heigthTriangle, angleCosinus);
     }
   }
   else
   {
-    int yPB = calculateDistance(xPlayer, yPlayer, xPlayer, yBall);
-    int yBK = calculateDistance(xPlayer, yPlayer, xPlayer, 320);
-    double scale = yBK / yPB;
-    int heigthTriangle = ((xBall - xPlayer) * scale) + xBall;
-    if (xPlayer > xBall && yPlayer < yBall)
+    int yPB = calculateDistance(xPlayer, yPlayer, xPlayer, yBall); // calculates distance between y-cord player and y-cord ball
+    int yBK = calculateDistance(xPlayer, yPlayer, xPlayer, 320);   // calculates distance between y-cord player and wall
+    double scale = yBK / yPB;                                      // calculates scale for reference
+    int heigthTriangle = ((xBall - xPlayer) * scale) + xBall;      // calculates endpoint for ball to wall after collision with player
+    if (xPlayer >= xBall && yPlayer <= yBall)
     {
       tft.drawTriangle(heigthTriangle, 320, xBall, 320, xBall, yBall, ILI9341_ORANGE);
+      moveBall(xBall, yBall, heigthTriangle, 320, angleSinus);
     }
     else
     {
-      tft.drawTriangle(heigthTriangle, 0, xBall, 0, xBall, yBall, ILI9341_ORANGE);
+      tft.drawTriangle(heigthTriangle, 0, xBall, 0, xBall, yBall, ILI9341_DARKCYAN);
+      moveBall(xBall, yBall, heigthTriangle, 0, angleSinus);
     }
   }
 }
 
-void moveBall(uint16_t *posXp, uint16_t *posYp, uint16_t *posXb, uint16_t *posYb)
+void detectCollision(uint16_t *posXp, uint16_t *posYp, uint16_t *posXb, uint16_t *posYb)
 {
-  // midden player
-  uint16_t oldPosXp = *posXp;
-  uint16_t oldPosYp = *posYp;
-  // midden ball
-  uint16_t oldPosXb = *posXb;
-  uint16_t oldPosYb = *posYb;
-
-  double ballXplayerY = calculateDistance(oldPosXb, oldPosYb, oldPosXb, oldPosYp);
-  double playerXballX = calculateDistance(oldPosXp, oldPosYp, oldPosXb, oldPosYb);
-
-  double sinus = asin(ballXplayerY / playerXballX);
-  double cosinus = acos(ballXplayerY / playerXballX);
-
-  double angleSinus = sinus * (180 / PI);
-  double angleCosinus = cosinus * (180 / PI);
+  //// midden player
+  // uint16_t oldPosXp = *posXp;
+  // uint16_t oldPosYp = *posYp;
+  //// midden ball
+  // uint16_t oldPosXb = *posXb;
+  // uint16_t oldPosYb = *posYb;
 
   if (*posXp <= *posXb && *posYp <= *posYb)
   {
@@ -148,8 +223,8 @@ void moveBall(uint16_t *posXp, uint16_t *posYp, uint16_t *posXb, uint16_t *posYb
     *posYb = ILI9341_TFTHEIGHT - RADIUS_BALL - 1;
   }
 
-  tft.fillCircle(oldPosXb, oldPosYb, RADIUS_BALL, ILI9341_WHITE);
-  tft.fillCircle(*posXb, *posYb, RADIUS_BALL, ILI9341_RED);
+  // tft.fillCircle(oldPosXb, oldPosYb, RADIUS_BALL, ILI9341_WHITE);
+  // tft.fillCircle(*posXb, *posYb, RADIUS_BALL, ILI9341_RED);
 }
 
 void movePlayer(uint16_t *posXp, uint16_t *posYp)
@@ -157,8 +232,8 @@ void movePlayer(uint16_t *posXp, uint16_t *posYp)
   uint16_t oldPosXp = *posXp;
   uint16_t oldPosYp = *posYp;
   Nunchuk.getState(NUNCHUK_ADDRESS);
-  *posXp += (Nunchuk.state.joy_y_axis - 127) / 32;
-  *posYp += (Nunchuk.state.joy_x_axis - 127) / 32;
+  *posXp += (Nunchuk.state.joy_y_axis - 127) / 64; // / 64 for testing
+  *posYp += (Nunchuk.state.joy_x_axis - 127) / 64; // / 64 for testing
 
   if (*posXp < RADIUS_PLAYER)
   {
@@ -180,7 +255,7 @@ void movePlayer(uint16_t *posXp, uint16_t *posYp)
 
   if (*posXp + RADIUS_PLAYER + RADIUS_BALL >= *posXb && *posXp - RADIUS_PLAYER - RADIUS_BALL <= *posXb && *posYp + RADIUS_PLAYER + RADIUS_BALL >= *posYb && *posYp - RADIUS_PLAYER - RADIUS_BALL <= *posYb)
   {
-      moveBall(posXp, posYp, posXb, posYb);
+    detectCollision(posXp, posYp, posXb, posYb);
   }
 
   tft.fillCircle(oldPosXp, oldPosYp, RADIUS_PLAYER, ILI9341_WHITE);
