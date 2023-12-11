@@ -26,6 +26,10 @@ uint16_t *posYb = &posYBall;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
+void drawTriangleAfterCollisionPlayer(int, int, int, int, bool);
+void moveBall(double, double, double, double);
+void drawLineAfterCollisionWall(double, double, double, double);
+
 volatile uint16_t ticksSinceLastUpdate = 0;
 
 volatile bool segmentUpdateStatus = 0;
@@ -47,40 +51,178 @@ ISR(TIMER0_COMPA_vect)
   ticksSinceLastUpdate++;
 }
 
-void moveBall(double xBall, double yBall, double xEnd, double yEnd, double angle)
+void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b, double ybMinus, bool xUp, bool yUp)
 {
+  if (xUp && yUp)
+  {
+    if (xEnd == ILI9341_TFTWIDTH)
+    {
+      // sin
+      mx = m * xEnd;
+      b = yEnd + mx;
+
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b)); // werkt
+    }
+    else if (yEnd == ILI9341_TFTHEIGHT)
+    {
+      // sin
+      drawLineAfterCollisionWall(xEnd, yEnd, 240, ((mx + b) + ((m * xEnd) + yEnd))); // werkt
+    }
+  }
+  else if (!xUp && yUp)
+  {
+    if (xEnd == 0)
+    {
+      // cos
+      // drawTriangleAfterCollisionPlayer(xEnd, yEnd, ((yEnd - b) / m), (mx + b), true);
+    }
+    else if (yEnd == ILI9341_TFTHEIGHT)
+    {
+      // cos
+
+      // // testing
+      // tft.setCursor(0, 0);
+      // tft.setTextSize(1);
+      // tft.setTextColor(ILI9341_BLACK);
+      // tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
+      // tft.print(m);
+      // tft.print(":");
+      // tft.print(b);
+      // tft.print(":");
+      // tft.print(mx);
+      // tft.print(":");
+      // tft.print(-(mx * m) - b);
+
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, -(mx * m) - b);
+    }
+  }
+  else if (xUp && !yUp)
+  {
+    if (xEnd == ILI9341_TFTWIDTH)
+    {
+      // cos
+
+      // testing
+      tft.setCursor(0, 0);
+      tft.setTextSize(1);
+      tft.setTextColor(ILI9341_BLACK);
+      tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
+      tft.print(m);
+      tft.print(":");
+      tft.print(b);
+      tft.print(":");
+      tft.print(mx);
+
+      drawTriangleAfterCollisionPlayer(xEnd, yEnd, ((yEnd - b) / m), (mx + b), true);
+    }
+    else if (yEnd == 0)
+    {
+      // cos
+      // drawTriangleAfterCollisionPlayer(((yEnd - b) / m), (mx + b), xEnd, yEnd, true);
+    }
+  }
+  else if (!xUp && !yUp)
+  {
+    if (xEnd == 0)
+    {
+      // sin
+      // drawTriangleAfterCollisionPlayer(((yEnd - b) / m), (mx + b), xEnd, yEnd, false);
+    }
+    else if (yEnd == 0)
+    {
+      // sin
+      // drawTriangleAfterCollisionPlayer(((yEnd - b) / m), (mx + b), xEnd, yEnd, false);
+    }
+  }
+}
+
+// testing only! rename to moveBallAfterCollisionWall and remove drawing functions
+void drawLineAfterCollisionWall(double xBall, double yBall, double xEnd, double yEnd)
+{
+  // // testing
+  // tft.setCursor(0, 0);
+  // tft.setTextSize(1);
+  // tft.setTextColor(ILI9341_BLACK);
+  // tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
+  // tft.print(xBall);
+  // tft.print(":");
+  // tft.print(yBall);
+  // tft.print(":");
+  // tft.print(xEnd);
+  // tft.print(":");
+  // tft.print(yEnd);
+  // //
+
+  tft.drawLine(xBall, yBall, xEnd, yEnd, ILI9341_PINK);
+  // tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_PINK);
+  // moveBall(xBall, yBall, xEnd, yEnd);
+}
+
+void moveBall(double xBall, double yBall, double xEnd, double yEnd)
+{
+  double m, mx, b, ybMinus;
   if (xEnd > xBall && yEnd > yBall)
   {
     // x omhoog
     // y omhoog
 
+    m = (yEnd - yBall) / (xEnd - xBall);
+
     if (yEnd > ILI9341_TFTHEIGHT)
     {
-      // x = (y - b) / m
-      double m = (yBall - yEnd) / (xBall - xEnd);
-      double b = -(m * xEnd);
+      mx = -m * xEnd;
+      b = mx + yEnd;
       yEnd = ILI9341_TFTHEIGHT;
-      double ybMinus = (yEnd - b);
-      xEnd = (ybMinus / m) / 2;
+      ybMinus = (yEnd - b);
+      xEnd = (ybMinus / m);
     }
 
     tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_GREEN);
+    // detectCollisionWall(xEnd, yEnd, m, mx, b, ybMinus, true, true); // werkt
   }
   else if (xEnd < xBall && yEnd > yBall)
   {
     // x omlaag
     // y omhoog
 
+    // m = (yEnd - yBall) / (xEnd - xBall);
+    m = (yBall - yEnd) / (xBall - xEnd);
+
     if (xEnd < 0)
     {
       // y = mx + b
-      double m = (yBall - yEnd) / (xBall - xEnd);
-      double b = -(m * xEnd);
+      m = (yBall - yEnd) / (xBall - xEnd);
+      b = -(m * xEnd);
       xEnd = 0;
       yEnd = b + ILI9341_TFTHEIGHT;
     }
 
+    mx = m * xEnd;
+    b = yEnd - mx;
+
+    // // testing
+    // xEnd = 110;
+    // yEnd = 320;
+    // m = (160.0 / -10.0); // 320 - 160 / 110 - 120
+    // mx = m * xEnd;       // 1760
+    // b = yEnd - mx;       // 2080
+
+    // tft.setCursor(0, 0);
+    // tft.setTextSize(1);
+    // tft.setTextColor(ILI9341_BLACK);
+    // tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
+    // tft.print(m);
+    // tft.print(":");
+    // tft.print(mx);
+    // tft.print(":");
+    // tft.print(b);
+    // tft.print(":");
+    // tft.print(xEnd);
+    // tft.print(":");
+    // tft.print(yEnd);
+
     tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_ORANGE);
+    // detectCollisionWall(xEnd, yEnd, m, mx, b, ybMinus, false, true);
   }
   else if (xEnd > xBall && yEnd < yBall)
   {
@@ -90,14 +232,36 @@ void moveBall(double xBall, double yBall, double xEnd, double yEnd, double angle
     if (xEnd > ILI9341_TFTWIDTH)
     {
       // y = mx + b
-      double m = (yBall - yEnd) / (xBall - xEnd);
-      double b = -(m * xEnd);
+      m = (yBall - yEnd) / (xBall - xEnd);
+      b = -(m * xEnd);
       xEnd = ILI9341_TFTWIDTH;
-      double mx = (m * xEnd);
+      mx = (m * xEnd);
       yEnd = mx + b;
     }
 
+    // // testing
+    // xEnd = 110;
+    // yEnd = 320;
+    // m = (160.0 / -10.0); // 320 - 160 / 110 - 120
+    // mx = m * xEnd;       // 1760
+    // b = yEnd - mx;       // 2080
+
+    // tft.setCursor(0, 0);
+    // tft.setTextSize(1);
+    // tft.setTextColor(ILI9341_BLACK);
+    // tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
+    // tft.print(m);
+    // tft.print(":");
+    // tft.print(mx);
+    // tft.print(":");
+    // tft.print(b);
+    // tft.print(":");
+    // tft.print(xEnd);
+    // tft.print(":");
+    // tft.print(yEnd);
+
     tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_DARKCYAN);
+    detectCollisionWall(xEnd, yEnd, m, mx, b, ybMinus, true, false);
   }
   else if (xEnd < xBall && yEnd < yBall)
   {
@@ -115,6 +279,7 @@ void moveBall(double xBall, double yBall, double xEnd, double yEnd, double angle
     }
 
     tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_BLACK);
+    detectCollisionWall(xEnd, yEnd, m, mx, b, ybMinus, false, false);
   }
 }
 
@@ -124,18 +289,10 @@ double calculateDistance(int x1, int y1, int x2, int y2)
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
+// testing only! rename to moveBallAfterCollisionPlayer and remove drawing functions
 // Draws a triangle to calculate the direction and endpoint for the ball after a collision with a player
-void drawTriangleAfterCollision(int xBall, int yBall, int xPlayer, int yPlayer, bool cosinus)
+void drawTriangleAfterCollisionPlayer(int xBall, int yBall, int xPlayer, int yPlayer, bool cosinus)
 {
-  double ballXplayerY = calculateDistance(xBall, yBall, xBall, yPlayer);
-  double playerXballX = calculateDistance(xPlayer, yPlayer, xBall, yBall);
-
-  double sinusCalc = asin(ballXplayerY / playerXballX);
-  double cosinusCalc = acos(ballXplayerY / playerXballX);
-
-  double angleSinus = sinusCalc * (180 / PI);
-  double angleCosinus = cosinusCalc * (180 / PI);
-
   if (cosinus)
   {
     int xPB = calculateDistance(xPlayer, yPlayer, xBall, yPlayer); // calculates distance between x-cord player and x-cord ball
@@ -145,12 +302,12 @@ void drawTriangleAfterCollision(int xBall, int yBall, int xPlayer, int yPlayer, 
     if (xPlayer <= xBall && yPlayer <= yBall)
     {
       tft.drawTriangle(240, heigthTriangle, 240, yBall, xBall, yBall, ILI9341_GREEN);
-      moveBall(xBall, yBall, 240, heigthTriangle, angleCosinus);
+      moveBall(xBall, yBall, 240, heigthTriangle);
     }
     else
     {
       tft.drawTriangle(0, heigthTriangle, 0, yBall, xBall, yBall, ILI9341_BLACK);
-      moveBall(xBall, yBall, 0, heigthTriangle, angleCosinus);
+      moveBall(xBall, yBall, 0, heigthTriangle);
     }
   }
   else
@@ -162,17 +319,17 @@ void drawTriangleAfterCollision(int xBall, int yBall, int xPlayer, int yPlayer, 
     if (xPlayer >= xBall && yPlayer <= yBall)
     {
       tft.drawTriangle(heigthTriangle, 320, xBall, 320, xBall, yBall, ILI9341_ORANGE);
-      moveBall(xBall, yBall, heigthTriangle, 320, angleSinus);
+      moveBall(xBall, yBall, heigthTriangle, 320);
     }
     else
     {
       tft.drawTriangle(heigthTriangle, 0, xBall, 0, xBall, yBall, ILI9341_DARKCYAN);
-      moveBall(xBall, yBall, heigthTriangle, 0, angleSinus);
+      moveBall(xBall, yBall, heigthTriangle, 0);
     }
   }
 }
 
-void detectCollision(uint16_t *posXp, uint16_t *posYp, uint16_t *posXb, uint16_t *posYb)
+void detectCollisionPlayer(uint16_t *posXp, uint16_t *posYp, uint16_t *posXb, uint16_t *posYb)
 {
   //// midden player
   // uint16_t oldPosXp = *posXp;
@@ -184,25 +341,25 @@ void detectCollision(uint16_t *posXp, uint16_t *posYp, uint16_t *posXb, uint16_t
   if (*posXp <= *posXb && *posYp <= *posYb)
   {
     // cos
-    drawTriangleAfterCollision(*posXb, *posYb, *posXp, *posYp, true);
+    drawTriangleAfterCollisionPlayer(*posXb, *posYb, *posXp, *posYp, true);
   }
 
   if (*posXp >= *posXb && *posYp <= *posYb)
   {
     // sin
-    drawTriangleAfterCollision(*posXb, *posYb, *posXp, *posYp, false);
+    drawTriangleAfterCollisionPlayer(*posXb, *posYb, *posXp, *posYp, false);
   }
 
   if (*posXp <= *posXb && *posYp >= *posYb)
   {
     // sin
-    drawTriangleAfterCollision(*posXb, *posYb, *posXp, *posYp, false);
+    drawTriangleAfterCollisionPlayer(*posXb, *posYb, *posXp, *posYp, false);
   }
 
   if (*posXp >= *posXb && *posYp >= *posYb)
   {
     // cos
-    drawTriangleAfterCollision(*posXb, *posYb, *posXp, *posYp, true);
+    drawTriangleAfterCollisionPlayer(*posXb, *posYb, *posXp, *posYp, true);
   }
 
   if (*posXb < RADIUS_BALL)
@@ -255,7 +412,7 @@ void movePlayer(uint16_t *posXp, uint16_t *posYp)
 
   if (*posXp + RADIUS_PLAYER + RADIUS_BALL >= *posXb && *posXp - RADIUS_PLAYER - RADIUS_BALL <= *posXb && *posYp + RADIUS_PLAYER + RADIUS_BALL >= *posYb && *posYp - RADIUS_PLAYER - RADIUS_BALL <= *posYb)
   {
-    detectCollision(posXp, posYp, posXb, posYb);
+    detectCollisionPlayer(posXp, posYp, posXb, posYb);
   }
 
   tft.fillCircle(oldPosXp, oldPosYp, RADIUS_PLAYER, ILI9341_WHITE);
