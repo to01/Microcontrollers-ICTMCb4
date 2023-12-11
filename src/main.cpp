@@ -103,17 +103,17 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       // cos
 
       // testing
-      tft.setCursor(0, 0);
-      tft.setTextSize(1);
-      tft.setTextColor(ILI9341_BLACK);
-      tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
-      tft.print(m);
-      tft.print(":");
-      tft.print(b);
-      tft.print(":");
-      tft.print(mx);
+      // tft.setCursor(0, 0);
+      // tft.setTextSize(1);
+      // tft.setTextColor(ILI9341_BLACK);
+      // tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
+      // tft.print(m);
+      // tft.print(":");
+      // tft.print(b);
+      // tft.print(":");
+      // tft.print(mx);
 
-      drawTriangleAfterCollisionPlayer(xEnd, yEnd, ((yEnd - b) / m), (mx + b), true);
+      // drawTriangleAfterCollisionPlayer(xEnd, yEnd, ((yEnd - b) / m), (mx + b), true);
     }
     else if (yEnd == 0)
     {
@@ -389,8 +389,8 @@ void movePlayer(uint16_t *posXp, uint16_t *posYp)
   uint16_t oldPosXp = *posXp;
   uint16_t oldPosYp = *posYp;
   Nunchuk.getState(NUNCHUK_ADDRESS);
-  *posXp += (Nunchuk.state.joy_y_axis - 127) / 64; // / 64 for testing
-  *posYp += (Nunchuk.state.joy_x_axis - 127) / 64; // / 64 for testing
+  *posXp += (Nunchuk.state.joy_y_axis - 127) / 64; // / 64 for testing - 32 normaal
+  *posYp += (Nunchuk.state.joy_x_axis - 127) / 64; // / 64 for testing - 32 normaal
 
   if (*posXp < RADIUS_PLAYER)
   {
