@@ -122,7 +122,6 @@ void IRSetup(void)
 */
 void segmentDisplaySetup(void)
 {
-  Wire.begin();
   Wire.beginTransmission(SEVENSEGMENTADDR);
   Wire.write(OFF);
   Wire.endTransmission();
@@ -133,6 +132,7 @@ void setup(void)
   timerSetup();
   IRSetup();
   sei();
+  Wire.begin();
   segmentDisplaySetup();
   tft.begin();
 }
