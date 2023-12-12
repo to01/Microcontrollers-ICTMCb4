@@ -79,21 +79,10 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
     }
     else if (yEnd == ILI9341_TFTHEIGHT)
     {
-      // // testing
-      // tft.setCursor(0, 0);
-      // tft.setTextSize(1);
-      // tft.setTextColor(ILI9341_BLACK);
-      // tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
-      // tft.print(m);
-      // tft.print(":");
-      // tft.print(b);
-      // tft.print(":");
-      // tft.print(mx);
-      // tft.print(":");
-      // tft.print(-(mx * m) - b);
-      // //
+      mx = m * xEnd;
+      b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 0, ((mx + b) + ((m * xEnd) + yEnd))); // werkt half ofzo
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b)); // werkt
     }
   }
   else if (xUp && !yUp) // darkcyanLine
@@ -123,23 +112,16 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
     }
     else if (yEnd == 0)
     {
-      // // testing
-      // tft.setCursor(0, 280);
-      // tft.setTextSize(1);
-      // tft.setTextColor(ILI9341_BLACK);
-      // tft.fillRect(0, 280, 240, 40, ILI9341_WHITE);
-      // tft.print(m);
-      // tft.print(":");
-      // tft.print(b);
-      // tft.print(":");
-      // tft.print(mx);
-
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, ((mx + b) + ((m * xEnd) + yEnd))); // werkt niet
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, ((mx + b) + ((m * xEnd) + yEnd))); // werkt
     }
   }
 }
 
 // testing only! rename to moveBallAfterCollisionWall and remove drawing functions
+//
+// URGENT!! -------------------------------------------------------------
+// met behulp van xUp & yUp zorgen dat de juiste kaats weergegeven wordt.
+// URGENT!! -------------------------------------------------------------
 void drawLineAfterCollisionWall(double xBall, double yBall, double xEnd, double yEnd)
 {
   // // testing
@@ -261,34 +243,14 @@ void moveBall(double xBall, double yBall, double xEnd, double yEnd)
     {
       // y = mx + b
       // x = (y - b) / m
-      // m = (yEnd - yBall) / (xEnd - xBall);
       b = yEnd;
       yEnd = 0;
       ybMinus = (yEnd - b);
       xEnd = (ybMinus / m);
     }
 
-    // // testing for detectCollisionWall
-    // xEnd = 0;
-    // yEnd = 90;
-    // m = (70.0 / 120.0); // 90 - 160 / 0 - 120
-    // mx = m * xEnd;       // 0
-    // b = yEnd - mx;       // 90
-
-    // tft.setCursor(0, 280);
-    // tft.setTextSize(1);
-    // tft.setTextColor(ILI9341_BLACK);
-    // tft.fillRect(0, 280, 240, 40, ILI9341_WHITE);
-    // tft.print(m);
-    // tft.print(":");
-    // tft.print(mx);
-    // tft.print(":");
-    // tft.print(b);
-    // tft.print(":");
-    // tft.print(xEnd);
-    // tft.print(":");
-    // tft.print(yEnd);
-    // //
+    mx = m * xEnd;
+    b = yEnd - mx;
 
     tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_BLACK);
     detectCollisionWall(xEnd, yEnd, m, mx, b, ybMinus, false, false);
