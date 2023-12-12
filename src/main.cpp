@@ -26,8 +26,6 @@ uint16_t *posYb = &posYBall;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
-void drawTriangleAfterCollisionPlayer(int, int, int, int, bool);
-void moveBall(double, double, double, double);
 void drawLineAfterCollisionWall(double, double, double, double);
 
 volatile uint16_t ticksSinceLastUpdate = 0;
@@ -51,7 +49,7 @@ ISR(TIMER0_COMPA_vect)
   ticksSinceLastUpdate++;
 }
 
-// calculates the next endpoint after a collision with a wall and draws the trajectory
+// Calculates the next endpoint after a collision with a wall
 void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b, double ybMinus, bool xUp, bool yUp)
 {
   if (xUp && yUp)
@@ -61,11 +59,11 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = m * xEnd;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b)); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b));
     }
     else if (yEnd == ILI9341_TFTHEIGHT)
     {
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, ((mx + b) + ((m * xEnd) + yEnd))); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 240, ((mx + b) + ((m * xEnd) + yEnd)));
     }
   }
   else if (!xUp && yUp) // orangeLine
@@ -75,14 +73,14 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = -m * ILI9341_TFTWIDTH;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx + b)); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx + b));
     }
     else if (yEnd == ILI9341_TFTHEIGHT)
     {
       mx = m * xEnd;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b)); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b));
     }
   }
   else if (xUp && !yUp) // darkcyanLine
@@ -92,13 +90,13 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = m * xEnd;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b)); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b));
     }
     else if (yEnd == 0)
     {
       mx = -m * ILI9341_TFTWIDTH;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx - b)); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx - b));
     }
   }
   else if (!xUp && !yUp) // blackLine
@@ -108,11 +106,11 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = -m * ILI9341_TFTWIDTH;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx + b)); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx + b));
     }
     else if (yEnd == 0)
     {
-      drawLineAfterCollisionWall(xEnd, yEnd, 0, ((mx + b) + ((m * xEnd) + yEnd))); // werkt
+      drawLineAfterCollisionWall(xEnd, yEnd, 0, ((mx + b) + ((m * xEnd) + yEnd)));
     }
   }
 }
@@ -143,10 +141,12 @@ void drawLineAfterCollisionWall(double xBall, double yBall, double xEnd, double 
   // moveBall(xBall, yBall, xEnd, yEnd);
 }
 
-// draws the ball at the end of the line
-// will be the point which the ball will move to
-// moving animation is still missing
-// functie werkt
+// Calculates the endpoint for the ball to move to
+// Uses y = mx + b and x = (y - b) / m
+//
+// URGENT!! -------------------------------------------------------------
+// functie voor ball bewegen mist.
+// URGENT!! -------------------------------------------------------------
 void moveBall(double xBall, double yBall, double xEnd, double yEnd)
 {
   double m, mx, b, ybMinus;
@@ -154,13 +154,8 @@ void moveBall(double xBall, double yBall, double xEnd, double yEnd)
 
   if (xEnd > xBall && yEnd > yBall)
   {
-    // x omhoog
-    // y omhoog
-
     if (yEnd > ILI9341_TFTHEIGHT)
     {
-      // y = mx + b
-      // x = (y - b) / m
       mx = -m * xEnd;
       b = mx + yEnd;
       yEnd = ILI9341_TFTHEIGHT;
@@ -173,13 +168,8 @@ void moveBall(double xBall, double yBall, double xEnd, double yEnd)
   }
   else if (xEnd < xBall && yEnd > yBall)
   {
-    // x omlaag
-    // y omhoog
-
     if (xEnd < 0)
     {
-      // y = mx + b
-      // x = (y - b) / m
       b = -(m * xEnd);
       xEnd = 0;
       yEnd = b + ILI9341_TFTHEIGHT;
@@ -188,40 +178,13 @@ void moveBall(double xBall, double yBall, double xEnd, double yEnd)
     mx = m * xEnd;
     b = yEnd - mx;
 
-    // // testing for detectCollisionWall
-    // xEnd = 110;
-    // yEnd = 320;
-    // m = (160.0 / -10.0); // 320 - 160 / 110 - 120
-    // mx = m * xEnd;       // 1760
-    // b = yEnd - mx;       // 2080
-
-    // tft.setCursor(0, 0);
-    // tft.setTextSize(1);
-    // tft.setTextColor(ILI9341_BLACK);
-    // tft.fillRect(0, 0, 240, 40, ILI9341_WHITE);
-    // tft.print(m);
-    // tft.print(":");
-    // tft.print(mx);
-    // tft.print(":");
-    // tft.print(b);
-    // tft.print(":");
-    // tft.print(xEnd);
-    // tft.print(":");
-    // tft.print(yEnd);
-    // //
-
     tft.fillCircle(xEnd, yEnd, RADIUS_BALL, ILI9341_ORANGE);
     detectCollisionWall(xEnd, yEnd, m, mx, b, ybMinus, false, true);
   }
   else if (xEnd > xBall && yEnd < yBall)
   {
-    // x omhoog
-    // y omlaag
-
     if (xEnd > ILI9341_TFTWIDTH)
     {
-      // y = mx + b
-      // x = (y - b) / m
       b = -(m * xEnd);
       xEnd = ILI9341_TFTWIDTH;
       mx = (m * xEnd);
@@ -236,13 +199,8 @@ void moveBall(double xBall, double yBall, double xEnd, double yEnd)
   }
   else if (xEnd < xBall && yEnd < yBall)
   {
-    // x omlaag
-    // y omlaag
-
     if (yEnd < 0)
     {
-      // y = mx + b
-      // x = (y - b) / m
       b = yEnd;
       yEnd = 0;
       ybMinus = (yEnd - b);
