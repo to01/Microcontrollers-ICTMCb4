@@ -26,6 +26,7 @@ uint16_t *posYb = &posYBall;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
+void moveBall(double, double, double, double);
 void drawLineAfterCollisionWall(double, double, double, double);
 
 volatile uint16_t ticksSinceLastUpdate = 0;
@@ -52,6 +53,7 @@ ISR(TIMER0_COMPA_vect)
 // Calculates the next endpoint after a collision with a wall
 void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b, double ybMinus, bool xUp, bool yUp)
 {
+  double xWall, yWall;
   if (xUp && yUp)
   {
     if (xEnd == ILI9341_TFTWIDTH) // greenLine
@@ -59,11 +61,23 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = m * xEnd;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b));
+      if (mx + b > ILI9341_TFTHEIGHT)
+      {
+        yWall = ILI9341_TFTHEIGHT;
+        xWall = (yWall - b) / -m;
+      }
+
+      if (xWall < 0)
+      {
+        yWall = b;
+        xWall = 0;
+      }
+
+      drawLineAfterCollisionWall(xEnd, yEnd, xWall, yWall);
     }
     else if (yEnd == ILI9341_TFTHEIGHT)
     {
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, ((mx + b) + ((m * xEnd) + yEnd)));
+      drawLineAfterCollisionWall(xEnd, yEnd, ILI9341_TFTWIDTH, ((mx + b) + ((m * xEnd) + yEnd)));
     }
   }
   else if (!xUp && yUp) // orangeLine
@@ -73,7 +87,13 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = -m * ILI9341_TFTWIDTH;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx + b));
+      if (mx + b > ILI9341_TFTHEIGHT)
+      {
+        yWall = ILI9341_TFTHEIGHT;
+        xWall = (yWall - mx) / -m;
+      }
+
+      drawLineAfterCollisionWall(xEnd, yEnd, xWall, yWall);
     }
     else if (yEnd == ILI9341_TFTHEIGHT)
     {
@@ -90,13 +110,25 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = m * xEnd;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 0, (mx + b));
+      if (mx + b < 0)
+      {
+        yWall = 0;
+        xWall = (yWall - b) / -m;
+      }
+
+      if (xWall < 0)
+      {
+        yWall = b;
+        xWall = 0;
+      }
+
+      drawLineAfterCollisionWall(xEnd, yEnd, xWall, yWall);
     }
     else if (yEnd == 0)
     {
       mx = -m * ILI9341_TFTWIDTH;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx - b));
+      drawLineAfterCollisionWall(xEnd, yEnd, ILI9341_TFTWIDTH, (mx - b));
     }
   }
   else if (!xUp && !yUp) // blackLine
@@ -106,7 +138,7 @@ void detectCollisionWall(double xEnd, double yEnd, double m, double mx, double b
       mx = -m * ILI9341_TFTWIDTH;
       b = yEnd + mx;
 
-      drawLineAfterCollisionWall(xEnd, yEnd, 240, (mx + b));
+      drawLineAfterCollisionWall(xEnd, yEnd, ILI9341_TFTWIDTH, (mx + b));
     }
     else if (yEnd == 0)
     {
@@ -443,7 +475,7 @@ int main(void)
   tft.fillCircle(posXBall, posYBall, RADIUS_BALL, ILI9341_RED);
   while (1)
   {
-    updateSegmentDisplay();
+    // updateSegmentDisplay();
     if (ticksSinceLastUpdate > 380) // 100FPS
     {
       movePlayer(posXp, posYp);
