@@ -7,7 +7,7 @@
 #define ON 0
 #define OFF 0b11111111
 #define SEVENSEGMENTADDR 0x21
-#define TOGGLENUMBER 10
+#define TOGGLENUMBER 38
 #define TFT_DC 9
 #define TFT_CS 10
 #define BAUDRATE 9600
@@ -15,6 +15,9 @@
 #define BUFFERLEN 256
 #define NUNCHUK_ADDRESS 0x52
 #define RADIUS_PLAYER 5
+#define INITIALONEDURATION 684 // 9ms
+#define INITIALZERODURATION 342 // 4.5ms
+#define DATALENGTH 32
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
@@ -27,14 +30,72 @@ ISR(INT0_vect)
   segmentUpdateStatus = !segmentUpdateStatus;
 }
 
-volatile int toggleCount = TOGGLENUMBER;
+volatile uint16_t toggleCount = 0;
+
+volatile uint16_t dataToSend = 42069;
+// volatile uint16_t dataToSend = 0b1111000011001010;
+volatile uint8_t bitTurn = 64;
+
+volatile bool getDigitToSend()
+{
+  if (bitTurn >= 16)
+  {
+    return !((dataToSend >> (15 - (bitTurn - 16))) % 2);
+  }
+  return ((dataToSend >> (15 - bitTurn)) % 2);
+}
+
+volatile void sendZero(void)
+{
+  PORTD &= ~(1 << PORTD6);
+}
+
+volatile void sendOne(void)
+{
+  PORTD ^= (1 << PORTD6);
+}
 
 ISR(TIMER0_COMPA_vect)
 {
-  if (toggleCount < TOGGLENUMBER)
+  if (bitTurn < DATALENGTH || bitTurn == 64)
   {
-    PORTD ^= (1 << PORTD6);
+    if (bitTurn == 64)
+    {
+      if (toggleCount < INITIALONEDURATION)
+      {
+        sendOne();
+      }
+      else if (toggleCount < INITIALONEDURATION + INITIALZERODURATION)
+      {
+        sendZero();
+      }
+      else
+      {
+        bitTurn = 0;
+        toggleCount = 0;
+      }
+    }
+    else
+    {
+      if (toggleCount >= TOGGLENUMBER)
+      {
+        toggleCount = 0;
+        bitTurn++;
+      }
+      if (getDigitToSend())
+      {
+        sendOne();
+      }
+      else
+      {
+        sendZero();
+      }
+    }
     toggleCount++;
+  }
+  else if (bitTurn >= DATALENGTH)
+  {
+    sendZero();
   }
   ticksSinceLastUpdate++;
 }
@@ -79,7 +140,7 @@ volatile void sendSignal()
 
 ISR(PCINT1_vect)
 {
-  sendSignal();
+  // sendSignal();
 }
 
 void toggleSegmentDisplay(void)
