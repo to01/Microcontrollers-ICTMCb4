@@ -10,8 +10,8 @@
 class Super_Menu_Header
 {
 public:
-    Super_Menu_Header(/* args */);
-    ~Super_Menu_Header();
+    Super_Menu_Header(); //con
+    ~Super_Menu_Header();//des
     void drawBackground(Adafruit_ILI9341 *tft);
 private:
 

@@ -16,6 +16,8 @@
 #define RADIUS_PLAYER 5
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
+
+Super_Menu_Header menu = Super_Menu_Header();
 /*
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
@@ -47,10 +49,17 @@ void updateDisplay(uint16_t *posXp, uint16_t *posYp)
   tft.fillCircle(*posXp, *posYp, RADIUS_PLAYER, ILI9341_BLUE);
 }*/
 
+void setup(void)
+{
+  TCCR0B |= (1 << CS00);   // no prescaler
+  sei();
+  tft.begin();
+}
 
 
 int main(void)
 {
+  setup();
   /*
   uint16_t posX = ILI9341_TFTWIDTH / 2;
   uint16_t posY = ILI9341_TFTHEIGHT / 2;
@@ -59,7 +68,6 @@ int main(void)
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
   */
-  Super_Menu_Header menu = Super_Menu_Header();
   menu.drawBackground(&tft);
   while (1)
   {
