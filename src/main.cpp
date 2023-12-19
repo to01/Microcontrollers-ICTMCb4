@@ -4,10 +4,7 @@
 #include "Adafruit_ILI9341.h"
 #include "Nunchuk.h"
 
-#define ON 0
-#define OFF 0b11111111
-#define SEVENSEGMENTADDR 0x21
-#define TOGGLENUMBER 38
+#define TOGGLENUMBER 38 // number of times the IR emitter toggles to send one bit
 #define TFT_DC 9
 #define TFT_CS 10
 #define BAUDRATE 9600
@@ -17,25 +14,25 @@
 #define RADIUS_PLAYER 5
 #define INITIALONEDURATION 684 // 9ms
 #define INITIALZERODURATION 342 // 4.5ms
-#define DATALENGTH 32
+#define DATALENGTH 32 // total amount of bits sent, including logical inverse
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
-volatile uint16_t ticksSinceLastUpdate = 0;
+volatile uint16_t ticksSinceLastUpdate = 0; // used to refresh display at a consistent rate
 
-volatile bool segmentUpdateStatus = 0;
+volatile uint16_t toggleCount = 0; // keeps track of the number of toggles by IR emitter
 
-ISR(INT0_vect)
-{
-  segmentUpdateStatus = !segmentUpdateStatus;
-}
+volatile uint16_t dataToSend = 42069; // 16 bit integer sent via IR
 
-volatile uint16_t toggleCount = 0;
-
-volatile uint16_t dataToSend = 42069;
-// volatile uint16_t dataToSend = 0b1111000011001010;
+/*
+  used to track which bit should be sent,
+  maximum value 32 unless sending new bits, in which case it is set to 64
+*/
 volatile uint8_t bitTurn = 64;
 
+/*
+  returns either 1 or 0 depending on bitTurn, if bitTurn is 16 or above it will send the inverse of the first 16 bits
+*/
 volatile bool getDigitToSend()
 {
   if (bitTurn >= 16)
@@ -59,17 +56,17 @@ ISR(TIMER0_COMPA_vect)
 {
   if (bitTurn < DATALENGTH || bitTurn == 64)
   {
-    if (bitTurn == 64)
+    if (bitTurn == 64) // if communication start
     {
-      if (toggleCount < INITIALONEDURATION)
+      if (toggleCount < INITIALONEDURATION) // send 1 for 9ms
       {
         sendOne();
       }
-      else if (toggleCount < INITIALONEDURATION + INITIALZERODURATION)
+      else if (toggleCount < INITIALONEDURATION + INITIALZERODURATION) // then send 0 for 4.5ms
       {
         sendZero();
       }
-      else
+      else // then start sending data
       {
         bitTurn = 0;
         toggleCount = 0;
@@ -77,7 +74,7 @@ ISR(TIMER0_COMPA_vect)
     }
     else
     {
-      if (toggleCount >= TOGGLENUMBER)
+      if (toggleCount >= TOGGLENUMBER) // reset togglecount and go to next bit if togglecount reaches TOGGLENUMBER
       {
         toggleCount = 0;
         bitTurn++;
@@ -93,7 +90,7 @@ ISR(TIMER0_COMPA_vect)
     }
     toggleCount++;
   }
-  else if (bitTurn >= DATALENGTH)
+  else if (bitTurn >= DATALENGTH) // makes sure the IR emitter is off while idle
   {
     sendZero();
   }
@@ -130,35 +127,6 @@ void updateDisplay(uint16_t *posXp, uint16_t *posYp)
   tft.fillCircle(*posXp, *posYp, RADIUS_PLAYER, ILI9341_BLUE);
 }
 
-volatile void sendSignal()
-{
-  if (toggleCount >= TOGGLENUMBER)
-  {
-    toggleCount = 0;
-  }
-}
-
-ISR(PCINT1_vect)
-{
-  // sendSignal();
-}
-
-void toggleSegmentDisplay(void)
-{
-  static bool currentStatus = 0;
-  Wire.beginTransmission(SEVENSEGMENTADDR);
-  if (currentStatus)
-  {
-    Wire.write(OFF);
-  }
-  else
-  {
-    Wire.write(ON);
-  }
-  currentStatus = !currentStatus;
-  Wire.endTransmission();
-}
-
 void timerSetup(void)
 {
   TIMSK0 |= (1 << OCIE0A); // enable comp match a interrupt
@@ -181,31 +149,13 @@ void IRSetup(void)
   DDRD |= (1 << DDD6);   // set IR pin output
 }
 
-void segmentDisplaySetup(void)
-{
-  Wire.begin();
-  Wire.beginTransmission(SEVENSEGMENTADDR);
-  Wire.write(OFF);
-  Wire.endTransmission();
-}
-
 void setup(void)
 {
   timerSetup();
   buttonSetup();
   IRSetup();
   sei();
-  segmentDisplaySetup();
   tft.begin();
-}
-
-void updateSegmentDisplay(void)
-{
-  if (segmentUpdateStatus)
-  {
-    toggleSegmentDisplay();
-    segmentUpdateStatus = 0;
-  }
 }
 
 int main(void)
@@ -219,7 +169,6 @@ int main(void)
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
   while (1)
   {
-    updateSegmentDisplay();
     if (ticksSinceLastUpdate > 380) // 100FPS
     {
       updateDisplay(posXp, posYp);
