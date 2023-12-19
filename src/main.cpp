@@ -20,6 +20,13 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 volatile uint16_t ticksSinceLastUpdate = 0; // used to refresh display at a consistent rate
 
+volatile bool segmentUpdateStatus = 0;
+
+ISR(INT0_vect)
+{
+  segmentUpdateStatus = !segmentUpdateStatus;
+}
+
 volatile uint16_t toggleCount = 0; // keeps track of the number of toggles by IR emitter
 
 volatile uint16_t dataToSend = 42069; // 16 bit integer sent via IR
@@ -135,13 +142,6 @@ void timerSetup(void)
   TCCR0B |= (1 << CS00);   // no prescaler
 }
 
-void buttonSetup(void)
-{
-  PORTC |= (1 << PORTC1);
-  PCICR |= (1 << PCIE1);
-  PCMSK1 |= (1 << PCINT9);
-}
-
 void IRSetup(void)
 {
   EIMSK |= (1 << INT0);  // enable external INT0 interrupts
@@ -152,7 +152,6 @@ void IRSetup(void)
 void setup(void)
 {
   timerSetup();
-  buttonSetup();
   IRSetup();
   sei();
   tft.begin();
