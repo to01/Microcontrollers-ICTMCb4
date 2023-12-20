@@ -12,9 +12,10 @@
 #define BUFFERLEN 256
 #define NUNCHUK_ADDRESS 0x52
 #define RADIUS_PLAYER 5
-#define INITIALONEDURATION 684 // 9ms
-#define INITIALZERODURATION 342 // 4.5ms
-#define DATALENGTH 32 // total amount of bits sent, including logical inverse
+#define INITIALONEDURATION 684    // 9ms
+#define INITIALZERODURATION 342   // 4.5ms
+#define DATALENGTH 32             // total amount of bits sent, including logical inverse
+#define ALLOWEDINITIALVARIANCE 32 // allowed variance for initial one and zero
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
@@ -22,7 +23,6 @@ volatile uint16_t ticksSinceLastUpdate = 0; // used to refresh display at a cons
 
 ISR(INT0_vect)
 {
-
 }
 
 volatile uint16_t toggleCount = 0; // keeps track of the number of toggles by IR emitter
@@ -99,8 +99,70 @@ void sendIR(void)
     }
     toggleCount++;
   }
-  else { // When done sending
+  else
+  { // When done sending
     sendingIR = false;
+  }
+}
+
+bool getRecieverStatus(void)
+{
+  return !((PIND >> PIND2) % 2);
+}
+
+uint16_t readcount = 0;
+enum recieveStatus
+{
+  initialOne,
+  initialZero,
+  dataBits,
+  inverseBits
+};
+
+recieveStatus currentRecieveStatus = initialOne;
+
+void resetRecieveIR(void)
+{
+  recievingIR = false;
+  currentRecieveStatus = initialOne;
+  readcount = 0;
+}
+
+void recieveIR(void)
+{
+  switch (currentRecieveStatus)
+  {
+  case initialOne:
+    if (readcount < INITIALONEDURATION - ALLOWEDINITIALVARIANCE)
+    {
+      if (getRecieverStatus())
+      {
+        readcount++;
+      }
+      else
+      {
+        resetRecieveIR();
+      }
+    }
+    else
+    {
+      if (readcount > INITIALONEDURATION)
+      {
+        resetRecieveIR();
+      }
+      else if (!getRecieverStatus())
+      {
+        currentRecieveStatus = initialZero;
+      }
+    }
+    break;
+  case initialZero:
+    DDRD |= (1<<DDD4);
+    break;
+  case dataBits:;
+    break;
+  case inverseBits:;
+    break;
   }
 }
 
@@ -113,6 +175,11 @@ ISR(TIMER0_COMPA_vect)
   else if (bitTurn >= DATALENGTH) // makes sure the IR emitter is off while idle
   {
     sendZero();
+    recievingIR = true; // INFO THIS IS TEMPORARY 
+    if (recievingIR)
+    {
+      recieveIR();
+    }
   }
   ticksSinceLastUpdate++;
 }
@@ -199,6 +266,7 @@ int main(void)
   {
     if (ticksSinceLastUpdate > 380) // 100FPS
     {
+      PORTD ^= (1<<PORTD4);
       updateDisplay(posXp, posYp);
       ticksSinceLastUpdate = 0;
     }
