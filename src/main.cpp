@@ -20,22 +20,20 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 volatile uint16_t ticksSinceLastUpdate = 0; // used to refresh display at a consistent rate
 
-volatile bool segmentUpdateStatus = 0;
-
 ISR(INT0_vect)
 {
-  segmentUpdateStatus = !segmentUpdateStatus;
+
 }
 
 volatile uint16_t toggleCount = 0; // keeps track of the number of toggles by IR emitter
 
-volatile uint16_t dataToSend = 42069; // 16 bit integer sent via IR
+volatile uint16_t dataToSend; // 16 bit integer sent via IR
 
 /*
   used to track which bit should be sent,
   maximum value 32 unless sending new bits, in which case it is set to 64
 */
-volatile uint8_t bitTurn = 64;
+volatile uint8_t bitTurn;
 
 /*
   returns either 1 or 0 depending on bitTurn, if bitTurn is 16 or above it will send the inverse of the first 16 bits
@@ -59,7 +57,11 @@ volatile void sendOne(void)
   PORTD ^= (1 << PORTD6);
 }
 
-ISR(TIMER0_COMPA_vect)
+volatile bool sendingIR = false;
+
+volatile bool recievingIR = false;
+
+void sendIR(void)
 {
   if (bitTurn < DATALENGTH || bitTurn == 64)
   {
@@ -96,6 +98,17 @@ ISR(TIMER0_COMPA_vect)
       }
     }
     toggleCount++;
+  }
+  else { // When done sending
+    sendingIR = false;
+  }
+}
+
+ISR(TIMER0_COMPA_vect)
+{
+  if (sendingIR)
+  {
+    sendIR();
   }
   else if (bitTurn >= DATALENGTH) // makes sure the IR emitter is off while idle
   {
@@ -157,6 +170,21 @@ void setup(void)
   tft.begin();
 }
 
+/*
+  Sets the variables needed to send bits, returns false if not possible (e.g. when sending or recieving IR)
+*/
+bool sendBits(uint16_t bitsToSend)
+{
+  if (!sendingIR || !recievingIR)
+  {
+    dataToSend = bitsToSend;
+    bitTurn = 64;
+    sendingIR = true;
+    return true;
+  }
+  return false;
+}
+
 int main(void)
 {
   setup();
@@ -166,6 +194,7 @@ int main(void)
   uint16_t *posYp = &posY;
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
+  sendBits(0b1010101010101010);
   while (1)
   {
     if (ticksSinceLastUpdate > 380) // 100FPS
