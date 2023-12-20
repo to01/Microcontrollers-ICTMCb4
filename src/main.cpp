@@ -31,93 +31,42 @@
 // data for the nodes in the linked list
 struct GameColors
 {
+  GameColors(uint8_t colorCode, uint16_t ILI9341Color) : colorCode(colorCode), ILI9341Color(ILI9341Color) {}
   uint8_t colorCode;     // every color has a code for infraredprotocol
   uint16_t ILI9341Color; // color combined to ILI9341Color
-  GameColors *next;      // pointer to the next node
-  GameColors *prev;      // pointer to the previous node
 };
 
-// create a new node with color and ILI9341Color
-GameColors *createNode(uint8_t color, uint16_t ILI9341Color)
-{
-  GameColors *node = new GameColors; // create a new node
-  node->colorCode = color;           // set the code for the infraredprotocol
-  node->ILI9341Color = ILI9341Color; // set the color for the ILI9341
-  node->next = NULL;                 // set the next pointer to NULL
-  node->prev = NULL;                 // set the previous pointer to NULL
-  return node;                       // return the new node
-}
+GameColors gameColorsArray[8] = {
+    GameColors(RED, ILI9341_RED),
+    GameColors(ORANGE, ILI9341_ORANGE),
+    GameColors(YELLOW, ILI9341_YELLOW),
+    GameColors(LIGHT_GREEN, ILI9341_GREEN),
+    GameColors(GREEN, ILI9341_OLIVE),
+    GameColors(LIGHT_BLUE, ILI9341_CYAN),
+    GameColors(BLUE, ILI9341_BLUE),
+    GameColors(PURPLE, ILI9341_PURPLE)};
 
-GameColors *Red = createNode(RED, ILI9341_RED);                  // initialize a new node
-GameColors *Orange = createNode(ORANGE, ILI9341_ORANGE);         // initialize a new node
-GameColors *Yellow = createNode(YELLOW, ILI9341_YELLOW);         // initialize a new node
-GameColors *LightGreen = createNode(LIGHT_GREEN, ILI9341_GREEN); // initialize a new node
-GameColors *Green = createNode(GREEN, ILI9341_OLIVE);            // initialize a new node
-GameColors *LightBlue = createNode(LIGHT_BLUE, ILI9341_CYAN);    // initialize a new node
-GameColors *Blue = createNode(BLUE, ILI9341_BLUE);               // initialize a new node
-GameColors *Purple = createNode(PURPLE, ILI9341_PURPLE);         // initialize a new node
-
-// link the nodes to their neighbor to initialize the linked list
-void initializeGameColors()
-{
-  Red->next = Orange;
-  Orange->next = Yellow;
-  Yellow->next = LightGreen;
-  LightGreen->next = Green;
-  Green->next = LightBlue;
-  LightBlue->next = Blue;
-  Blue->next = Purple;
-  Purple->next = Red;
-  Red->prev = Purple;
-  Orange->prev = Red;
-  Yellow->prev = Orange;
-  LightGreen->prev = Yellow;
-  Green->prev = LightGreen;
-  LightBlue->prev = Green;
-  Blue->prev = LightBlue;
-  Purple->prev = Blue;
-}
 #pragma endregion
 
 #pragma region CodeOpponent
-// data for the nodes in the linked list
+
 struct CodeOpponent
 {
-  GameColors gameColors; // need this to combine the four colours to 1 code for infraredprotocol
-  uint16_t ILI9341Color; // to display the color on the screen
-  CodeOpponent *next;    // pointer to the next node
-  CodeOpponent *prev;    // pointer to the previous node
+  GameColors gameColors;    // need this to combine the four colours to 1 code for infraredprotocol
+  uint16_t indexGameColors; // to display the color on the screen
+  CodeOpponent(GameColors gameColors, uint16_t indexGameColors) : gameColors(gameColors), indexGameColors(indexGameColors) {}
 };
 
-// create a new node with ILI9341Color
-CodeOpponent *createCodeOpponentNode(GameColors *gameColors, uint16_t ILI9341Color)
-{
-  CodeOpponent *node = new CodeOpponent; // create a new node
-  node->gameColors = *gameColors;        // set the given node from the GameColors linked list
-  node->ILI9341Color = ILI9341Color;     // set the color for the ILI9341
-  node->next = NULL;                     // set the next pointer to NULL
-  node->prev = NULL;                     // set the previous pointer to NULL
-  return node;                           // return the new node
-}
+int currentPin = 0;
 
-CodeOpponent *First = createCodeOpponentNode(Red, ILI9341_RED);  // first option for the code for the opponent
-CodeOpponent *Second = createCodeOpponentNode(Red, ILI9341_RED); // second option for the code for the opponent
-CodeOpponent *Third = createCodeOpponentNode(Red, ILI9341_RED);  // third option for the code for the opponent
-CodeOpponent *Fourth = createCodeOpponentNode(Red, ILI9341_RED); // fourth option for the code for the opponent
+// GameColors codeOpponentArray[4];
 
-// pointer to the current color
-CodeOpponent *currentCodeOpponent = First;
+CodeOpponent codeOpponentArray[4] = {
+    CodeOpponent(GameColors(RED, ILI9341_RED), 0),
+    CodeOpponent(GameColors(RED, ILI9341_RED), 0),
+    CodeOpponent(GameColors(RED, ILI9341_RED), 0),
+    CodeOpponent(GameColors(RED, ILI9341_RED), 0)};
 
-// link the nodes to their neighbor to initialize the linked list
-void initializeCodeOpponent()
-{
-  First->next = Second;
-  Second->next = Third;
-  Third->next = Fourth;
-  Second->prev = First;
-  Third->prev = Second;
-  Fourth->prev = Third;
-}
 #pragma endregion
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
@@ -143,127 +92,134 @@ ISR(TIMER0_COMPA_vect)
   ticksSinceLastUpdate++;
 }
 
-// PROBLEM! not looing through the linked list
-void changeColor(GameColors node, CodeOpponent *pin)
+void changeColorPin(uint16_t currentPin)
 {
   Nunchuk.getState(NUNCHUK_ADDRESS);
   if (Nunchuk.state.joy_y_axis > 200)
   {
-    node = *node.prev;
+    if (codeOpponentArray[currentPin].indexGameColors > 0)
+    {
+      codeOpponentArray[currentPin].indexGameColors--;
+    }
+    else
+    {
+      codeOpponentArray[currentPin].indexGameColors = 7;
+    }
   }
 
   if (Nunchuk.state.joy_y_axis < 50)
   {
-    node = *node.next;
+    if (codeOpponentArray[currentPin].indexGameColors < 7)
+    {
+      codeOpponentArray[currentPin].indexGameColors++;
+    }
+    else
+    {
+      codeOpponentArray[currentPin].indexGameColors = 0;
+    }
   }
-  pin->gameColors = node;
-
-  // // code om te kijken of de kleuren uit de linked list goed worden opgehaald
+  codeOpponentArray[currentPin].gameColors = gameColorsArray[codeOpponentArray[currentPin].indexGameColors];
   // tft.setCursor(0, 0);
   // tft.setTextSize(1);
   // tft.setTextColor(ILI9341_BLACK);
   // tft.fillRect(0, 0, 240, 20, ILI9341_WHITE);
-  // tft.print("Color: ");
-  // tft.print(pin->gameColors.colorCode);
-  // tft.print(" ");
-  // tft.print(pin->gameColors.ILI9341Color);
-  // tft.print(" ");
-  // tft.print(node.colorCode);
-  // tft.print(" ");
-  // tft.print(node.ILI9341Color);
-
-  // tft.fillScreen(pin->ILI9341Color); // deze functie werkt soms wel en soms niet met het wisselen van de gedefinieerde kleuren.
+  // tft.print(codeOpponentArray[currentPin].indexGameColors);
 }
 
-void codeOpponent()
+void selectPin(uint16_t currentPin)
 {
   Nunchuk.getState(NUNCHUK_ADDRESS);
   if (Nunchuk.state.joy_x_axis > 200)
   {
-    if (currentCodeOpponent->next == NULL)
+    if (currentPin < 3)
     {
-      currentCodeOpponent = Fourth;
+      currentPin++;
     }
     else
     {
-      currentCodeOpponent = currentCodeOpponent->next;
+      currentPin = 3;
     }
   }
 
   if (Nunchuk.state.joy_x_axis < 50)
   {
-    if (currentCodeOpponent->prev == NULL)
+    if (currentPin > 0)
     {
-      currentCodeOpponent = First;
+      currentPin--;
     }
     else
     {
-      currentCodeOpponent = currentCodeOpponent->prev;
+      currentPin = 0;
     }
   }
+  tft.setCursor(0, 0);
+  tft.setTextSize(1);
+  tft.setTextColor(ILI9341_BLACK);
+  tft.fillRect(0, 0, 240, 20, ILI9341_WHITE);
+  tft.print(currentPin);
 }
 
 void changeColorCodeOpponent()
 {
-  if (currentCodeOpponent == First)
+  if (currentPin == 0)
   {
-    changeColor(First->gameColors, First);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, First->gameColors.ILI9341Color);
+    changeColorPin(currentPin);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
   }
-  else if (currentCodeOpponent == Second)
+  else if (currentPin == 1)
   {
-    changeColor(Second->gameColors, Second);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, Second->gameColors.ILI9341Color);
+    changeColorPin(currentPin);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
   }
-  else if (currentCodeOpponent == Third)
+  else if (currentPin == 2)
   {
-    changeColor(Third->gameColors, Third);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, Third->gameColors.ILI9341Color);
+    changeColorPin(currentPin);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
   }
-  else if (currentCodeOpponent == Fourth)
+  else if (currentPin == 3)
   {
-    changeColor(Fourth->gameColors, Fourth);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, Fourth->gameColors.ILI9341Color);
+    changeColorPin(currentPin);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
   }
 }
 
 void makeCodeOpponent()
 {
-  codeOpponent();
+  selectPin(currentPin);
 
-  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, First->gameColors.ILI9341Color);
-  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, Second->gameColors.ILI9341Color);
-  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, Third->gameColors.ILI9341Color);
-  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, Fourth->gameColors.ILI9341Color);
+  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[0].indexGameColors].ILI9341Color);
+  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[1].indexGameColors].ILI9341Color);
+  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[2].indexGameColors].ILI9341Color);
+  tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[3].indexGameColors].ILI9341Color);
 
-  if (currentCodeOpponent == First)
+  if (currentPin == 0)
   {
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, First->gameColors.ILI9341Color);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
     changeColorCodeOpponent();
   }
-  else if (currentCodeOpponent == Second)
+  else if (currentPin == 1)
   {
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, Second->gameColors.ILI9341Color);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
     changeColorCodeOpponent();
   }
-  else if (currentCodeOpponent == Third)
+  else if (currentPin == 2)
   {
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, Third->gameColors.ILI9341Color);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
     changeColorCodeOpponent();
   }
-  else if (currentCodeOpponent == Fourth)
+  else if (currentPin == 4)
   {
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, Fourth->gameColors.ILI9341Color);
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].indexGameColors].ILI9341Color);
     changeColorCodeOpponent();
   }
 }
@@ -350,8 +306,6 @@ int main(void)
 {
   setup();
 
-  initializeGameColors();
-  initializeCodeOpponent();
   tft.fillScreen(ILI9341_WHITE);
   while (1)
   {
@@ -361,6 +315,7 @@ int main(void)
       // updateDisplay(posXp, posYp);
       // changeColor(currentColor);
       makeCodeOpponent();
+      // changeColorCodeOpponent();
       ticksSinceLastUpdate = 0;
     }
   }
