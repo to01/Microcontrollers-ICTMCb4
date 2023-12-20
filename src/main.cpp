@@ -153,13 +153,35 @@ void recieveIR(void)
       else if (!getRecieverStatus())
       {
         currentRecieveStatus = initialZero;
+        readcount = 0;
       }
     }
     break;
   case initialZero:
-    DDRD |= (1<<DDD4);
+    if (readcount < INITIALZERODURATION - ALLOWEDINITIALVARIANCE)
+    {
+      if (!getRecieverStatus())
+      {
+        readcount++;
+      }
+      else
+      {
+        resetRecieveIR();
+      }
+    }
+    else
+    {
+      if (readcount > INITIALZERODURATION || getRecieverStatus())
+      {
+        currentRecieveStatus = dataBits;
+        readcount = 0;
+      }
+    }
     break;
-  case dataBits:;
+  case dataBits:
+    DDRD ^= (1<<DDD4);
+    PORTD &= ~(1<<PORTD4);
+    resetRecieveIR();
     break;
   case inverseBits:;
     break;
