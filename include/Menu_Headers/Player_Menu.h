@@ -7,10 +7,10 @@
 
 #include "Menu_Headers/Super_Menu_Screen.h"
 
-class Player_Menu : Super_Menu_Screen
+class Player_Menu : public Super_Menu_Screen
 {
 public:
-    Player_Menu();  //con
+    Player_Menu(Adafruit_ILI9341* tft);  //con
     ~Player_Menu(); //dec
 private:
 

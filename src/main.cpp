@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include "Adafruit_ILI9341.h"
 #include "Nunchuk.h"
-#include "Menu_Headers/Super_Menu_Screen.h"
+#include "Menu.h"
 
 #define ON 0
 #define OFF 0b11111111
@@ -17,7 +17,6 @@
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
-Super_Menu_Screen menu = Super_Menu_Screen(&tft);
 /*
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
@@ -54,12 +53,15 @@ void setup(void)
   TCCR0B |= (1 << CS00);   // no prescaler
   sei();
   tft.begin();
+  tft.setRotation(1);
 }
-
 
 int main(void)
 {
   setup();
+  Menu menu =  {"hello world", 10, {}};
+  drawBackground();
+   drawMenu(menu);
   /*
   uint16_t posX = ILI9341_TFTWIDTH / 2;
   uint16_t posY = ILI9341_TFTHEIGHT / 2;
@@ -68,7 +70,6 @@ int main(void)
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
   */
-  menu.drawBackground();
 
   while (1)
   {

@@ -11,6 +11,8 @@
 #define TFT_DC 9
 #define TFT_CS 10
 #define BACKGROUNDCOLOUR 0x0500 //5-6-5 color code for dark green
+#define FONTSIZE 2.9
+//font?
 
 class Super_Menu_Screen
 {
