@@ -110,7 +110,7 @@ bool getRecieverStatus(void)
   return !((PIND >> PIND2) % 2);
 }
 
-uint16_t readcount = 0;
+uint16_t readCount = 0;
 enum recieveStatus
 {
   initialOne,
@@ -120,24 +120,29 @@ enum recieveStatus
 };
 
 recieveStatus currentRecieveStatus = initialOne;
+uint16_t recievedBits = 0;
 
 void resetRecieveIR(void)
 {
   recievingIR = false;
   currentRecieveStatus = initialOne;
-  readcount = 0;
+  readCount = 0;
 }
 
 void recieveIR(void)
 {
+  static bool previousValue;
+  static uint8_t bitCount;
+  static uint16_t currentBits;
+
   switch (currentRecieveStatus)
   {
   case initialOne:
-    if (readcount < INITIALONEDURATION - ALLOWEDINITIALVARIANCE)
+    if (readCount < INITIALONEDURATION - ALLOWEDINITIALVARIANCE)
     {
       if (getRecieverStatus())
       {
-        readcount++;
+        readCount++;
       }
       else
       {
@@ -146,23 +151,23 @@ void recieveIR(void)
     }
     else
     {
-      if (readcount > INITIALONEDURATION)
+      if (readCount > INITIALONEDURATION)
       {
         resetRecieveIR();
       }
       else if (!getRecieverStatus())
       {
         currentRecieveStatus = initialZero;
-        readcount = 0;
+        readCount = 0;
       }
     }
     break;
   case initialZero:
-    if (readcount < INITIALZERODURATION - ALLOWEDINITIALVARIANCE)
+    if (readCount < INITIALZERODURATION - ALLOWEDINITIALVARIANCE)
     {
       if (!getRecieverStatus())
       {
-        readcount++;
+        readCount++;
       }
       else
       {
@@ -171,19 +176,68 @@ void recieveIR(void)
     }
     else
     {
-      if (readcount > INITIALZERODURATION || getRecieverStatus())
+      if (readCount > INITIALZERODURATION || getRecieverStatus())
       {
         currentRecieveStatus = dataBits;
-        readcount = 0;
+        readCount = 0;
+        // previousValue = getRecieverStatus();
+        bitCount = 0;
+        currentBits = 0; 
       }
     }
     break;
   case dataBits:
-    DDRD ^= (1<<DDD4);
-    PORTD &= ~(1<<PORTD4);
-    resetRecieveIR();
+    if (readCount == TOGGLENUMBER/2)
+    {
+        currentBits = (currentBits << 1);
+        currentBits |= previousValue;
+        previousValue = getRecieverStatus();
+        if (previousValue == 1)
+        {
+          PORTD |= (1<<PORTD4);
+        }
+        else
+        {
+          PORTD &= ~(1<<PORTD4);
+        }
+    }
+    else if (readCount == TOGGLENUMBER)
+    {
+      readCount = 0;
+      bitCount++;
+    }
+    readCount++;
+    // PORTD &= ~(1<<PORTD4);
+    // if (readCount >= TOGGLENUMBER)
+    // {
+    //   currentBits = (currentBits << 1);
+    //   currentBits |= previousValue;
+    //   bitCount++;
+    //   readCount = 0;
+    //   previousValue = getRecieverStatus();
+    //   if (previousValue == 1)
+    //   {
+    //     PORTD |= (1<<PORTD4);
+    //   }
+    //   else
+    //   {
+    //     PORTD &= ~(1<<PORTD4);
+    //   }
+    // }
+    // else if (previousValue != getRecieverStatus())
+    // {
+    //   // resetRecieveIR(); // INFO this might be changed later to a more packet-loss friendly alternative
+    // }
+    // readCount++;
+    if (bitCount > 16) {
+      currentRecieveStatus = inverseBits;
+      readCount = 0;
+      bitCount = 0;
+    }
     break;
-  case inverseBits:;
+  case inverseBits:
+    recievedBits = currentBits;
+    resetRecieveIR();
     break;
   }
 }
@@ -197,7 +251,7 @@ ISR(TIMER0_COMPA_vect)
   else if (bitTurn >= DATALENGTH) // makes sure the IR emitter is off while idle
   {
     sendZero();
-    recievingIR = true; // INFO THIS IS TEMPORARY 
+    recievingIR = true; // INFO THIS IS TEMPORARY
     if (recievingIR)
     {
       recieveIR();
@@ -264,7 +318,7 @@ void setup(void)
 */
 bool sendBits(uint16_t bitsToSend)
 {
-  if (!sendingIR || !recievingIR)
+  if (!sendingIR && !recievingIR)
   {
     dataToSend = bitsToSend;
     bitTurn = 64;
@@ -284,12 +338,14 @@ int main(void)
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
   sendBits(0b1010101010101010);
+  DDRD |= (1 << DDD4);
+  Serial.begin(9600);
   while (1)
   {
-    if (ticksSinceLastUpdate > 380) // 100FPS
+    if (ticksSinceLastUpdate > 380*1000) // 100FPS
     {
-      PORTD ^= (1<<PORTD4);
-      updateDisplay(posXp, posYp);
+      Serial.println(recievedBits);
+      // updateDisplay(posXp, posYp);
       ticksSinceLastUpdate = 0;
     }
   }
