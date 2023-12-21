@@ -21,10 +21,6 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 volatile uint16_t ticksSinceLastUpdate = 0; // used to refresh display at a consistent rate
 
-ISR(INT0_vect)
-{
-}
-
 volatile uint16_t toggleCount = 0; // keeps track of the number of toggles by IR emitter
 
 volatile uint16_t dataToSend; // 16 bit integer sent via IR
@@ -105,12 +101,16 @@ void sendIR(void)
   }
 }
 
+/*
+  Returns status of IR reciever, inverted to correspond with sent bits
+*/
 bool getRecieverStatus(void)
 {
   return !((PIND >> PIND2) % 2);
 }
 
-uint16_t readCount = 0;
+uint16_t readCount = 0; // number of times certain things have been read, used in different ways in recieveIR()
+
 enum recieveStatus
 {
   initialOne,
@@ -119,25 +119,28 @@ enum recieveStatus
   inverseBits
 };
 
-recieveStatus currentRecieveStatus = initialOne;
+recieveStatus currentRecieveStatus = initialOne; // used to decern the current status of recieveIR()
 uint16_t recievedBits = 0;
 
-void resetRecieveIR(void)
+void resetRecieveIR(void) // resets all values needed in recieveIR to their starting values
 {
   recievingIR = false;
   currentRecieveStatus = initialOne;
   readCount = 0;
 }
 
+/*
+  Function used by TIMER0 to recieve IR
+*/
 void recieveIR(void)
 {
   static bool previousValue;
-  static uint8_t bitCount;
-  static uint16_t currentBits;
+  static uint8_t bitCount; // used to track the number of bits read so far 
+  static uint16_t currentBits; // temporary variable to keep track of bits
 
   switch (currentRecieveStatus)
   {
-  case initialOne:
+  case initialOne: // checks for 9ms 1
     if (readCount < INITIALONEDURATION - ALLOWEDINITIALVARIANCE)
     {
       if (getRecieverStatus())
@@ -162,7 +165,7 @@ void recieveIR(void)
       }
     }
     break;
-  case initialZero:
+  case initialZero: // checks for 4.5ms 0 
     if (readCount < INITIALZERODURATION - ALLOWEDINITIALVARIANCE)
     {
       if (!getRecieverStatus())
@@ -180,26 +183,17 @@ void recieveIR(void)
       {
         currentRecieveStatus = dataBits;
         readCount = 0;
-        // previousValue = getRecieverStatus();
         bitCount = 0;
-        currentBits = 0; 
+        currentBits = 0;
       }
     }
     break;
-  case dataBits:
-    if (readCount == TOGGLENUMBER/2)
+  case dataBits: // reads data bits
+    if (readCount == TOGGLENUMBER / 2)
     {
-        currentBits = (currentBits << 1);
-        currentBits |= previousValue;
-        previousValue = getRecieverStatus();
-        if (previousValue == 1)
-        {
-          PORTD |= (1<<PORTD4);
-        }
-        else
-        {
-          PORTD &= ~(1<<PORTD4);
-        }
+      currentBits = (currentBits << 1);
+      currentBits |= previousValue;
+      previousValue = getRecieverStatus();
     }
     else if (readCount == TOGGLENUMBER)
     {
@@ -207,35 +201,14 @@ void recieveIR(void)
       bitCount++;
     }
     readCount++;
-    // PORTD &= ~(1<<PORTD4);
-    // if (readCount >= TOGGLENUMBER)
-    // {
-    //   currentBits = (currentBits << 1);
-    //   currentBits |= previousValue;
-    //   bitCount++;
-    //   readCount = 0;
-    //   previousValue = getRecieverStatus();
-    //   if (previousValue == 1)
-    //   {
-    //     PORTD |= (1<<PORTD4);
-    //   }
-    //   else
-    //   {
-    //     PORTD &= ~(1<<PORTD4);
-    //   }
-    // }
-    // else if (previousValue != getRecieverStatus())
-    // {
-    //   // resetRecieveIR(); // INFO this might be changed later to a more packet-loss friendly alternative
-    // }
-    // readCount++;
-    if (bitCount > 16) {
+    if (bitCount > 16)
+    {
       currentRecieveStatus = inverseBits;
       readCount = 0;
       bitCount = 0;
     }
     break;
-  case inverseBits:
+  case inverseBits: // currently only used for resetting and setting recievedBits, might be used to check inverse later
     recievedBits = currentBits;
     resetRecieveIR();
     break;
@@ -251,7 +224,6 @@ ISR(TIMER0_COMPA_vect)
   else if (bitTurn >= DATALENGTH) // makes sure the IR emitter is off while idle
   {
     sendZero();
-    recievingIR = true; // INFO THIS IS TEMPORARY
     if (recievingIR)
     {
       recieveIR();
@@ -300,9 +272,9 @@ void timerSetup(void)
 
 void IRSetup(void)
 {
-  EIMSK |= (1 << INT0);  // enable external INT0 interrupts
-  EICRA |= (1 << ISC01); // interrupt on falling edge
-  DDRD |= (1 << DDD6);   // set IR pin output
+  // EIMSK |= (1 << INT0);  // enable external INT0 interrupts
+  // EICRA |= (1 << ISC01); // interrupt on falling edge
+  DDRD |= (1 << DDD6); // set IR pin output
 }
 
 void setup(void)
@@ -338,14 +310,11 @@ int main(void)
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
   sendBits(0b1010101010101010);
-  DDRD |= (1 << DDD4);
-  Serial.begin(9600);
   while (1)
   {
-    if (ticksSinceLastUpdate > 380*1000) // 100FPS
+    if (ticksSinceLastUpdate > 380) // 100FPS
     {
-      Serial.println(recievedBits);
-      // updateDisplay(posXp, posYp);
+      updateDisplay(posXp, posYp);
       ticksSinceLastUpdate = 0;
     }
   }
