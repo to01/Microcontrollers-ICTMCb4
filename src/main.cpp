@@ -57,6 +57,14 @@ volatile bool sendingIR = false;
 
 volatile bool recievingIR = false;
 
+ISR(INT0_vect)
+{
+  if (!sendingIR)
+  {
+    recievingIR = true;
+  }
+}
+
 void sendIR(void)
 {
   if (bitTurn < DATALENGTH || bitTurn == 64)
@@ -272,8 +280,8 @@ void timerSetup(void)
 
 void IRSetup(void)
 {
-  // EIMSK |= (1 << INT0);  // enable external INT0 interrupts
-  // EICRA |= (1 << ISC01); // interrupt on falling edge
+  EIMSK |= (1 << INT0);  // enable external INT0 interrupts
+  EICRA |= (1 << ISC01); // interrupt on falling edge
   DDRD |= (1 << DDD6); // set IR pin output
 }
 
