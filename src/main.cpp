@@ -17,6 +17,11 @@
 #define RADIUS_CODEOPPONENT 25
 #define RADIUS_CODEOPPONENTGLOW 27
 
+#define FPS 380
+#define SELECTEDPINCOUNT 25
+#define SELECTPINSPEED 50
+#define CHANGECOLORCODEOPPONENTCOUNT 3
+
 #pragma region GameColors
 // colors whit their corrisponding infraredprotocol code
 #define RED 0b0000
@@ -120,6 +125,8 @@ void changeColorPin(uint16_t currentPin)
   codeOpponentArray[currentPin].gameColors = gameColorsArray[codeOpponentArray[currentPin].currentGameColors];
 }
 
+int changeColorCodeOpponentCount = 0;
+
 // function to display the new color of the current pin
 void changeColorCodeOpponent()
 {
@@ -142,85 +149,94 @@ void changeColorCodeOpponent()
     tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
     break;
   }
+  changeColorCodeOpponentCount++;
 }
 
 // function to draw the glow of the current pin and deletes the glow of the previous pin
-void displayCodeOpponent()
+void displayCurrentPinCodeOpponent()
 {
   if (currentPin == 0)
   {
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                         // delete the glow of the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);                                                             // draws the glow of the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color); // draws the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[1].currentGameColors].ILI9341Color);      // draws the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                         // delete the glow of the previous pin
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE); // draws the glow of the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color); // draws the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[1].currentGameColors].ILI9341Color);      // draws the previous pin
   }
   else if (currentPin == 1)
   {
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                                 // delete the glow of the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                             // delete the glow of the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);                                                             // draws the glow of the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color); // draws the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[0].currentGameColors].ILI9341Color);              // draws the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[2].currentGameColors].ILI9341Color);          // draws the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                                 // delete the glow of the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                             // delete the glow of the previous pin
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE); // draws the glow of the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color); // draws the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[0].currentGameColors].ILI9341Color);              // draws the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[2].currentGameColors].ILI9341Color);          // draws the previous pin
   }
   else if (currentPin == 2)
   {
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                             // delete the glow of the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                                                 // delete the glow of the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);                                                             // draws the glow of the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color); // draws the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[1].currentGameColors].ILI9341Color);          // draws the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[3].currentGameColors].ILI9341Color);                              // draws the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                             // delete the glow of the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                                                 // delete the glow of the previous pin
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE); // draws the glow of the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color); // draws the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[1].currentGameColors].ILI9341Color);          // draws the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[3].currentGameColors].ILI9341Color);                              // draws the previous pin
   }
   else if (currentPin == 3)
   {
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                    // delete the glow of the previous pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENTGLOW, ILI9341_CASET);                                                                        // draws the glow of the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color);            // draws the current pin
-    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[2].currentGameColors].ILI9341Color); // draws the previous pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE);                                                    // delete the glow of the previous pin
+    tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENTGLOW, ILI9341_WHITE); // draws the glow of the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[currentPin].currentGameColors].ILI9341Color);            // draws the current pin
+    // tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[2].currentGameColors].ILI9341Color); // draws the previous pin
   }
 }
+
+int selectPinCount = 0;
+int selectPinSpeed = 0;
 
 // function to change the selected pin
 void selectPin()
 {
-  Nunchuk.getState(NUNCHUK_ADDRESS);  // get the state of the nunchuk
-  if (Nunchuk.state.joy_x_axis > 200) // if the joystick is moved to the right
+  selectPinSpeed++;
+  if (selectPinSpeed > SELECTPINSPEED)
   {
-    if (currentPin < 3) // if the current pin is not the last pin
+    Nunchuk.getState(NUNCHUK_ADDRESS);  // get the state of the nunchuk
+    if (Nunchuk.state.joy_x_axis > 200) // if the joystick is moved to the right
     {
-      currentPin++;
-      displayCodeOpponent();
+      if (currentPin < 3) // if the current pin is not the last pin
+      {
+        currentPin++;
+        displayCurrentPinCodeOpponent();
+      }
+      else // if the current pin is the last pin
+      {
+        currentPin = 3;
+      }
     }
-    else // if the current pin is the last pin
-    {
-      currentPin = 3;
-    }
-  }
 
-  if (Nunchuk.state.joy_x_axis < 50) // if the joystick is moved to the left
-  {
-    if (currentPin > 0) // if the current pin is not the first pin
+    if (Nunchuk.state.joy_x_axis < 50) // if the joystick is moved to the left
     {
-      currentPin--;
-      displayCodeOpponent();
+      if (currentPin > 0) // if the current pin is not the first pin
+      {
+        currentPin--;
+        displayCurrentPinCodeOpponent();
+      }
+      else // if the current pin is the first pin
+      {
+        currentPin = 0;
+      }
     }
-    else // if the current pin is the first pin
-    {
-      currentPin = 0;
-    }
+    selectPinSpeed = 0;
   }
-  changeColorCodeOpponent();
+  selectPinCount++;
 }
 
-// function to draw the first pins whit the default colors
-void initializeCodeOpponent()
+// function to draw the first pins whit their color
+void drawCodeOpponent()
 {
   tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[0].currentGameColors].ILI9341Color);     // draw the first pin
   tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 2 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[1].currentGameColors].ILI9341Color); // draw the second pin
   tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3 - RADIUS_CODEOPPONENT, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[2].currentGameColors].ILI9341Color); // draw the third pin
   tft.fillCircle(ILI9341_TFTWIDTH / 2, ILI9341_TFTHEIGHT / 4 * 3.5, RADIUS_CODEOPPONENT, gameColorsArray[codeOpponentArray[3].currentGameColors].ILI9341Color);                     // draw the fourth pin
-  displayCodeOpponent();
+  displayCurrentPinCodeOpponent();
 }
 
 // function to get the binary code for the infraredprotocol of the color code
@@ -324,15 +340,27 @@ int main(void)
   setup();
 
   tft.fillScreen(ILI9341_WHITE);
-  initializeCodeOpponent();
+  drawCodeOpponent();
   while (1)
   {
     updateSegmentDisplay();
-    if (ticksSinceLastUpdate > 380) // 100FPS
+    if (ticksSinceLastUpdate > FPS) // 100FPS
     {
       selectPin();
       getColorCodeBinary();
       ticksSinceLastUpdate = 0;
+    }
+
+    if (selectPinCount > SELECTEDPINCOUNT)
+    {
+      changeColorCodeOpponent();
+      selectPinCount = 0;
+    }
+
+    if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
+    {
+      drawCodeOpponent();
+      changeColorCodeOpponentCount = 0;
     }
   }
   return 0;
