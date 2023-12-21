@@ -230,18 +230,7 @@ void recieveIR(void)
     }
     break;
   case initialZero: // checks for 4.5ms 0 
-    if (readCount < INITIALZERODURATION - ALLOWEDINITIALVARIANCE)
-    {
-      if (!getRecieverStatus())
-      {
-        readCount++;
-      }
-      else
-      {
-        resetRecieveIR();
-      }
-    }
-    else
+    if (!(readCount < INITIALZERODURATION - ALLOWEDINITIALVARIANCE))
     {
       if (readCount > INITIALZERODURATION || getRecieverStatus())
       {
@@ -251,6 +240,7 @@ void recieveIR(void)
         currentBits = 0;
       }
     }
+    readCount++;
     break;
   case dataBits: // reads data bits
     if (readCount == TOGGLENUMBER / 2)
