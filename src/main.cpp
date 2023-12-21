@@ -308,10 +308,16 @@ int main(void)
   tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
   tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
   sendBits(0b1010101010101010);
+  Serial.begin(9600);
   while (1)
   {
-    if (ticksSinceLastUpdate > 380) // 100FPS
+    if (ticksSinceLastUpdate > 38000) // 100FPS
     {
+      for (int i = 0; i < 16; i++)
+      {
+        Serial.print((recievedBits>>i)%2);
+      }
+      Serial.println(" - " + recievedBits);
       updateDisplay(posXp, posYp);
       ticksSinceLastUpdate = 0;
     }
