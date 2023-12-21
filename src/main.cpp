@@ -311,7 +311,7 @@ int main(void)
   Serial.begin(9600);
   while (1)
   {
-    if (ticksSinceLastUpdate > 38000) // 100FPS
+    if (ticksSinceLastUpdate > 380) // 100FPS
     {
       Serial.println(recievedBits);
       updateDisplay(posXp, posYp);
