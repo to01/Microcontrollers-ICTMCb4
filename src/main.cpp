@@ -184,6 +184,13 @@ void recieveIR(void)
         currentBits = 0;
       }
     }
+    else
+    {
+      if (getRecieverStatus())
+      {
+        resetRecieveIR();
+      }
+    }
     readCount++;
     break;
   case dataBits: // reads data bits
@@ -313,11 +320,12 @@ int main(void)
   {
     if (ticksSinceLastUpdate > 38000) // 100FPS
     {
-      for (int i = 0; i < 16; i++)
+      for (int i = 15; i >= 0; i--)
       {
         Serial.print((recievedBits>>i)%2);
       }
-      Serial.println(" - " + recievedBits);
+      Serial.println();
+      Serial.println(recievedBits);
       updateDisplay(posXp, posYp);
       ticksSinceLastUpdate = 0;
     }
