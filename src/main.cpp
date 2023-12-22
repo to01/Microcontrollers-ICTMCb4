@@ -501,7 +501,6 @@ int main(void)
   drawCodeOpponent();
   while (1)
   {
-    updateSegmentDisplay();
     if (ticksSinceLastUpdate > FPS) // 100FPS
     {
       selectPin();
