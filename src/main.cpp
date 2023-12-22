@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include "Adafruit_ILI9341.h"
 #include "Nunchuk.h"
-#include "Nunchuck_state.h"
+#include "Nunchuk_state.h"
 #include "IR_Communication.h"
 
 #define TFT_DC 9

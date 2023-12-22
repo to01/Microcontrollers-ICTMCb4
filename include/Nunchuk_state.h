@@ -1,6 +1,8 @@
 #ifndef NUNCHUCK_STATE_H_
 #define NUNCHUCK_STATE_H_
 
+#define MINDETECTIONVAL 64
+
 #include "Nunchuk.h"
 
 enum Direction
@@ -8,10 +10,11 @@ enum Direction
     Up,
     Right,
     Down,
-    Left
+    Left,
+    None
 };
 
-Direction getNunchuckDirection();
+Direction getNunchukDirection();
 
 
 #endif
