@@ -18,6 +18,7 @@
 #define SELECTEDPINCOUNT 25
 #define SELECTPINSPEED 50
 #define CHANGECOLORCODEOPPONENTCOUNT 3
+#define BACKGROUNDCOLORGAME 0x0500
 
 // values for the playing field
 #define STARTVALUEXGUESS 20
@@ -434,11 +435,17 @@ void drawCodeOpponent()
 // function to draw the playing field
 void drawPlayingField()
 {
-  tft.fillScreen(ILI9341_LIGHTGREY);
+  tft.fillScreen(BACKGROUNDCOLORGAME);
   tft.fillRect(0, ILI9341_TFTHEIGHT / 2 - 1, ILI9341_TFTWIDTH - 20, 3, ILI9341_WHITE);
   tft.drawRect(ILI9341_TFTWIDTH - 20, ILI9341_TFTHEIGHT / 2 - 25, 21, 53, ILI9341_WHITE);
   tft.drawRect(ILI9341_TFTWIDTH - 21, ILI9341_TFTHEIGHT / 2 - 26, 22, 55, ILI9341_WHITE);
   tft.drawRect(ILI9341_TFTWIDTH - 22, ILI9341_TFTHEIGHT / 2 - 27, 23, 57, ILI9341_WHITE);
+
+  tft.setCursor(ILI9341_TFTHEIGHT / 2 - 21, 3);
+  tft.setTextColor(ILI9341_BLACK);
+  tft.setTextSize(2);
+  tft.setRotation(1);
+  tft.print("3:00");
 
   for (int i = 0; i < 6; i++)
   {
@@ -520,9 +527,6 @@ int main(void)
 {
   setup();
 
-  int secondTimeCount = 0;
-
-
   tft.fillScreen(ILI9341_WHITE);
   // drawCodeOpponent();
   drawPlayingField();
@@ -534,20 +538,8 @@ int main(void)
       // selectPin();
       // getColorCodeBinary();
 
-      // secondTimeCount++;
       ticksSinceLastUpdate = 0;
     }
-
-    // if (secondTimeCount > 100)
-    // {
-    //   tft.setCursor(ILI9341_TFTHEIGHT / 2 - 21, 3);
-    //   tft.setTextColor(ILI9341_BLACK);
-    //   tft.setTextSize(2);
-    //   tft.setRotation(1);
-    //   tft.fillRect(ILI9341_TFTWIDTH - 19, ILI9341_TFTHEIGHT / 2 - 24, 18, 51, ILI9341_LIGHTGREY);
-    //   tft.print("3:00");
-    //   secondTimeCount = 0;
-    // }
 
     // if (selectPinCount > SELECTEDPINCOUNT)
     // {
