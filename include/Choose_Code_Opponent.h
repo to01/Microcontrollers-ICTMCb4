@@ -1,12 +1,14 @@
 #ifndef _CHOOSE_CODE_OPPONENT_
 #define _CHOOSE_CODE_OPPONENT_
 
-#include <avr/io.h>
+// #include <avr/io.h>
 #include "Adafruit_ILI9341.h"
 #include "Nunchuk.h"
 
 #define TFT_DC 9
 #define TFT_CS 10
+
+#define BACKGROUNDCOLORGAME 0x0500
 
 // colors whit their corrisponding infraredprotocol code
 #define RED 0b0000
@@ -32,7 +34,7 @@ extern uint8_t selectPinCount; // used to select the pin
 
 extern uint8_t selectPinSpeed; // used to select the pin
 
-extern Adafruit_ILI9341 tft;
+extern Adafruit_ILI9341 tft; // define the tft screen
 
 void changeColorPin(uint16_t currentPin); // function to change the color of the current pin
 

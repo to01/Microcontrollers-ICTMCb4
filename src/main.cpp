@@ -13,7 +13,6 @@
 #define BUFFERLEN 256
 
 #define FPS 380
-#define BACKGROUNDCOLORGAME 0x0500
 
 // values for the playing field
 #define STARTVALUEXGUESS 20
@@ -78,13 +77,13 @@ void setup(void)
   IRSetup();
   sei();
   tft.begin();
+  tft.fillScreen(BACKGROUNDCOLORGAME);
 }
 
 int main(void)
 {
   setup();
 
-  tft.fillScreen(ILI9341_WHITE);
   drawCodeOpponent();
   // drawPlayingField();
   while (1)
