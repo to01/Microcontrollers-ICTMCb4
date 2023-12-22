@@ -240,6 +240,13 @@ void recieveIR(void)
         currentBits = 0;
       }
     }
+    else
+    {
+      if (getRecieverStatus())
+      {
+        resetRecieveIR();
+      }
+    }
     readCount++;
     break;
   case dataBits: // reads data bits
