@@ -59,17 +59,11 @@ void setup(void)
 int main(void)
 {
   setup();
-  Menu menu =  {"hello world", 10, {}};
-  drawBackground();
-   drawMenu(menu);
-  /*
-  uint16_t posX = ILI9341_TFTWIDTH / 2;
-  uint16_t posY = ILI9341_TFTHEIGHT / 2;
-  uint16_t *posXp = &posX;
-  uint16_t *posYp = &posY;
-  tft.fillRect(0, 0, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, ILI9341_WHITE);
-  tft.fillCircle(posX, posY, RADIUS_PLAYER, ILI9341_BLUE);
-  */
+  MenuItem SingleplayerItem = {"Singleplayer"};
+  MenuItem MultiplayerItem = {"Multiplayer"};
+
+  Menu startMenu =  {"Mastermind!", false, {SingleplayerItem,MultiplayerItem}};
+  drawMenu(startMenu);
 
   while (1)
   {
