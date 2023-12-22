@@ -1,15 +1,12 @@
 #include "Menu.h"
 
-struct Menu menu;
-struct MenuItem menuItem;
-
-void drawMenu(Menu menu)
+void drawMenu(Menu *menu)
 {
     drawBackground();
 
     tft.setTextSize(TITLE_FONT_SIZE);
     tft.setCursor(XPOS_TITLE, YPOS_SPACER);
-    tft.print(menu.title);
+    tft.print(menu->title);
 
     uint8_t spacer = YPOS_SPACER;
 
@@ -18,10 +15,10 @@ void drawMenu(Menu menu)
 
     for (uint8_t i = 0; i < MENU_ARRAY_SIZE; i++) 
     {
-        menu.itemArray[i].yPosition = (YPOS_START + spacer);
-        drawMenuItem(menu.itemArray[i]);
+        menu->itemArray[i].yPosition = (YPOS_START + spacer);
+        drawMenuItem(menu->itemArray[i]);
 
-        if (!menu.thirdOption) // if there is no third option, then skip the middle position.
+        if (!menu->thirdOption) // if there is no third option, then skip the middle position.
         {
             spacer = spacer * 2;
         }
@@ -38,5 +35,12 @@ void drawBackground()
 void drawMenuItem(MenuItem item)
 {
     tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.print(item.title);
+}
+
+void selectMenuItem(MenuItem item)
+{
+    tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.setTextColor(ILI9341_WHITE);
     tft.print(item.title);
 }

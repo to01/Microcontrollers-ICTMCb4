@@ -63,7 +63,8 @@ int main(void)
   MenuItem MultiplayerItem = {"Multiplayer"};
 
   Menu startMenu =  {"Mastermind!", false, {SingleplayerItem,MultiplayerItem}};
-  drawMenu(startMenu);
+  drawMenu(&startMenu);
+  selectMenuItem(startMenu.itemArray[0]);
 
   while (1)
   {
