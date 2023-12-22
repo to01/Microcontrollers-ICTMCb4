@@ -17,6 +17,10 @@
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
+extern Menu startMenu;
+extern Menu gameModeMenu;
+extern Menu singlePlayerMenu;
+
 /*
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
 {
@@ -59,13 +63,8 @@ void setup(void)
 int main(void)
 {
   setup();
-  MenuItem SingleplayerItem = {"Singleplayer"};
-  MenuItem MultiplayerItem = {"Multiplayer"};
-
-  Menu startMenu =  {"Mastermind!", false, {SingleplayerItem,MultiplayerItem}};
-  drawMenu(&startMenu);
-  selectMenuItem(startMenu.itemArray[0]);
-
+  goToGameMenu();
+  drawMenu(&singlePlayerMenu);
   while (1)
   {
 

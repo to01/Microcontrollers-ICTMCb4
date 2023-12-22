@@ -1,11 +1,28 @@
 #include "Menu.h"
 
+//the first menu on boot up
+  MenuItem SingleplayerItem = {"Singleplayer"}; 
+  MenuItem MultiplayerItem = {"Multiplayer"};
+  Menu startMenu =  {"Mastermind!", false, {SingleplayerItem,MultiplayerItem}};
+  
+  //the menu when mulitplayer is selected
+  MenuItem raceAgainstClocKItem = {"against the clock"};
+  MenuItem leastMovesItem = {"Least turns wins"};
+  Menu gameModeMenu = {"Gamemode", false, {raceAgainstClocKItem,leastMovesItem}};
+
+  //the menu when singleplayer is selected 
+  MenuItem easyDifficultyItem = {"easy"};
+  MenuItem mediumDifficultyItem = {"medium"};
+  MenuItem hardDifficultyItem = {"hard"};
+  Menu singlePlayerMenu = {"Difficulty", true, {easyDifficultyItem,mediumDifficultyItem,hardDifficultyItem}};
+
+//prints the title of a menu followed by all the menu items in their respective positions
 void drawMenu(Menu *menu)
 {
     drawBackground();
-
+    tft.setTextColor(ILI9341_WHITE);
     tft.setTextSize(TITLE_FONT_SIZE);
-    tft.setCursor(XPOS_TITLE, YPOS_SPACER);
+    tft.setCursor(XPOS_MIDDLE, YPOS_SPACER);
     tft.print(menu->title);
 
     uint8_t spacer = YPOS_SPACER;
@@ -25,22 +42,41 @@ void drawMenu(Menu *menu)
 
         spacer += YPOS_SPACER; //increase the value of spacer
     }
+    selectMenuItem(menu->itemArray[0]); //mark the first item as selected
 }
+
 
 void drawBackground()
 {
     tft.fillScreen(BACKGROUNDCOLOUR);
 }
 
+//draws the title of an item
 void drawMenuItem(MenuItem item)
 {
     tft.setCursor(XPOS_MIDDLE,item.yPosition);
     tft.print(item.title);
 }
 
+//turns the title of item to white and draws the selection cirle
 void selectMenuItem(MenuItem item)
 {
     tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item.yPosition + SELECT_YPOS), SELECTION_RADIUS, ILI9341_WHITE);
     tft.setTextColor(ILI9341_WHITE);
     tft.print(item.title);
+}
+
+//turns the title of item to darkgreen and removes the selection cirle
+void deselectMenuItem(MenuItem item)
+{
+    tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item.yPosition + SELECT_YPOS), SELECTION_RADIUS, BACKGROUNDCOLOUR);
+    tft.setTextColor(ILI9341_DARKGREEN);
+    tft.print(item.title);
+}
+
+void goToGameMenu()
+{
+    drawMenu(&gameModeMenu);
 }

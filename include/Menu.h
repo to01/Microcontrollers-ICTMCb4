@@ -5,22 +5,27 @@
 #include "Adafruit_ILI9341.h"
 
 #define BACKGROUNDCOLOUR 0x0500 // 5-6-5 color code for dark green
-#define XPOS_MIDDLE 100         // the middle of the screen when rotation(1) is used
-#define XPOS_TITLE 70           // xpositon of the title
-#define YPOS_TITLE 20
-#define YPOS_SPACER 30 // the space between menu items
-#define YPOS_START 70  // the height at which the first menu item is drawn
+
+#define XPOS_MIDDLE 100 // the middle of the screen when rotation(1) is used
+#define XPOS_TITLE 70   // Xpositon for the title
+#define YPOS_TITLE 20   // yPosition for the thile
+#define YPOS_SPACER 30  // the space between menu items
+#define YPOS_START 70   // the height at which the first menu item is drawn
+
 #define TITLE_FONT_SIZE 3
 #define ITEM_FONT_SIZE 2
+
 #define MENU_ARRAY_SIZE 3  // a menu always has a max of 3 items
-#define SELECT_DISTANCE 20 // distance from the text to where the selection circle is drawn
+
+#define SELECT_XPOS 20     // distance from the text to where the selection circle is drawn
+#define SELECT_YPOS 10     // distance to center the circle with the text
 #define SELECTION_RADIUS 3 // radius of selection circle
 
 extern Adafruit_ILI9341 tft;
 
 struct MenuItem
 {
-    char title[22];
+    char title[23];
     bool valid;
     uint8_t yPosition;
 };
@@ -37,5 +42,8 @@ void drawBackground();
 
 void drawMenuItem(MenuItem item);
 void selectMenuItem(MenuItem item);
+void deselectMenuItem(MenuItem item);
+
+void goToGameMenu();
 
 #endif
