@@ -72,7 +72,7 @@ void deselectMenuItem(MenuItem* item)
 {
     item->isSelected = false;
     tft.setCursor(XPOS_MIDDLE,item->yPosition);
-    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item->yPosition + SELECT_YPOS), SELECTION_RADIUS, ILI9341_WHITE);
+    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item->yPosition + SELECT_YPOS), SELECTION_RADIUS, BACKGROUNDCOLOUR);
     tft.setTextColor(ILI9341_DARKGREEN);
     tft.print(item->title);
 }

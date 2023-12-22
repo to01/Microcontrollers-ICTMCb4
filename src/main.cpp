@@ -63,8 +63,12 @@ void setup(void)
 int main(void)
 {
   setup();
-  goToGameMenu();
-  drawMenu(&singlePlayerMenu);
+  drawMenu(&startMenu);
+  Serial.begin(9600);
+  Serial.println(startMenu.itemArray[0].isSelected);
+  deselectMenuItem(&startMenu.itemArray[0]);
+  selectMenuItem(&startMenu.itemArray[1]);
+  Serial.println(startMenu.itemArray[0].isSelected);
   while (1)
   {
 

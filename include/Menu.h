@@ -45,7 +45,7 @@ void drawBackground();
 
 void drawMenuItem(MenuItem item);
 void selectMenuItem(MenuItem* item);
-void deselectMenuItem(MenuItem item);
+void deselectMenuItem(MenuItem* item);
 
 void goToGameMenu();
 void goToSingleplayerMenu();
