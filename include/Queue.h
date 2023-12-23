@@ -9,9 +9,15 @@
 class Queue
 {
 public:
-    int front;                     // front of the queue
-    int rear;                      // rear of the queue
-    int queue[MAXSIZE][COLORCODE]; // queue
+    uint8_t front;
+    uint8_t rear;
+    uint16_t queue[MAXSIZE][COLORCODE];
+
+    Queue()
+    {
+        front = -1;
+        rear = -1;
+    }
 
     // checks if the queue is full
     bool isFull()
