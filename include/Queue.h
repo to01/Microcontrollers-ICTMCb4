@@ -1,0 +1,45 @@
+#ifndef QUEUE_H
+#define QUEUE_H
+
+#include "Make_Code_Mechanics.h"
+
+#define MAXSIZE 6
+#define COLORCODE 4
+
+class Queue
+{
+public:
+    int front;                     // front of the queue
+    int rear;                      // rear of the queue
+    int queue[MAXSIZE][COLORCODE]; // queue
+
+    // checks if the queue is full
+    bool isFull()
+    {
+        return rear == MAXSIZE - 1;
+    }
+
+    // enqueue the guess
+    void enqueue(GameColors arr[], uint8_t size)
+    {
+        if (isFull())
+        {
+            dequeue();
+        }
+
+        rear++;
+        for (uint8_t i = 0; i < size; i++)
+        {
+            queue[rear][i] = arr[i].ILI9341Color;
+        }
+    }
+
+    // reset marker positions so the enqueue can overwrite the oldest guess
+    void dequeue()
+    {
+        front = -1;
+        rear = -1;
+    }
+};
+
+#endif // QUEUE_H
