@@ -25,6 +25,8 @@ extern Adafruit_ILI9341 tft; // define the tft screen
 
 extern Queue previousGuessQueue; // queue for the previous guesses
 
+extern uint16_t colorCodeReceivedFromOpponent; // variable to store the color code received from the opponent
+
 void drawPlayingField(void); // function to draw the playing field
 
 void selectPinMultiplayer(void); // function to change the selected pin
@@ -38,5 +40,9 @@ void storePreviousGuessMultiplayer(void); // function to store the previous gues
 void drawPreviousGuessMultiplayer(void); // function to draw the previous guesses
 
 void inputCodeMultiplayer(void); // function to input the code
+
+void setColorCodeReceivedFromOpponentToArray(void); // function to set the color code received from the opponent to an array
+
+void giveFeedbackMultiplayer(void); // function to give feedback
 
 #endif // _MAKE_GUESS_MULTIPLAYER_

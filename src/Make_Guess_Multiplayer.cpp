@@ -2,7 +2,11 @@
 
 Queue previousGuessQueue = Queue(); // queue for the previous guesses
 
-// function to draw the playing field
+uint16_t colorCodeReceivedFromOpponent = 0x4231; // variable to store the color code received from the opponent
+
+uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
+
+// function to draw the playing field and initialize the color code
 void drawPlayingField()
 {
     tft.fillScreen(BACKGROUNDCOLORGAME);
@@ -36,6 +40,8 @@ void drawPlayingField()
     {
         tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * cg, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[cg].currentGameColors].ILI9341Color);
     }
+
+    setColorCodeReceivedFromOpponentToArray();
 }
 
 // function to change the selected pin
@@ -144,8 +150,65 @@ void inputCodeMultiplayer()
     {
         storePreviousGuessMultiplayer();
         drawPreviousGuessMultiplayer();
+        giveFeedbackMultiplayer();
         currentPin = 0;
 
         blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
+    }
+}
+
+// function to set the color code received from the opponent to an array
+void setColorCodeReceivedFromOpponentToArray()
+{
+    // uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
+
+    colorCodeReceivedFromOpponentArray[0] = colorCodeReceivedFromOpponent >> 12 & 0b1111;
+    colorCodeReceivedFromOpponentArray[1] = colorCodeReceivedFromOpponent >> 8 & 0b1111;
+    colorCodeReceivedFromOpponentArray[2] = colorCodeReceivedFromOpponent >> 4 & 0b1111;
+    colorCodeReceivedFromOpponentArray[3] = colorCodeReceivedFromOpponent & 0b1111;
+}
+
+// function to check if the code is correct and to give feedback
+void giveFeedbackMultiplayer()
+{
+    uint8_t feedbackArray[4] = {0, 0, 0, 0};
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        {
+            feedbackArray[i] = 2;
+        }
+    }
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (feedbackArray[i] == 0)
+        {
+            for (uint8_t j = 0; j < 4; j++)
+            {
+                if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode && feedbackArray[j] == 0)
+                {
+                    feedbackArray[j] = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (feedbackArray[i] == 0)
+        {
+            tft.fillCircle(STARTVALUEXFEEDBACK + STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
+        }
+        else if (feedbackArray[i] == 1)
+        {
+            tft.fillCircle(STARTVALUEXFEEDBACK + STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
+        }
+        else if (feedbackArray[i] == 2)
+        {
+            tft.fillCircle(STARTVALUEXFEEDBACK + STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
+        }
     }
 }

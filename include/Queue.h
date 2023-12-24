@@ -41,6 +41,7 @@ public:
     }
 
     // reset marker positions so the enqueue can overwrite the oldest guess
+    // could change so the newest guess will be shown at the botom row and every other guess will be shifted up
     void dequeue()
     {
         front = -1;
