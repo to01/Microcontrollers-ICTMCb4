@@ -176,24 +176,21 @@ void giveFeedbackMultiplayer()
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        for (uint8_t j = 0; j < 4; j++)
         {
-            feedbackArray[i] = 2;
+            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode && feedbackArray[j] == 0)
+            {
+                feedbackArray[j] = 1;
+                break;
+            }
         }
     }
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        if (feedbackArray[i] == 0)
+        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
         {
-            for (uint8_t j = 0; j < 4; j++)
-            {
-                if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode && feedbackArray[j] == 0)
-                {
-                    feedbackArray[j] = 1;
-                    break;
-                }
-            }
+            feedbackArray[i] = 2;
         }
     }
 
@@ -240,38 +237,38 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
 {
     if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
     {
-      selectPinMultiplayer();
+        selectPinMultiplayer();
 
-      ticksSinceLastUpdate = 0;
-      fpsToSeconds++;
+        ticksSinceLastUpdate = 0;
+        fpsToSeconds++;
 
-      if (gameSeconds > 0)
-      {
-        if (fpsToSeconds > FRAMESTOSECONDS)
+        if (gameSeconds > 0)
         {
-          gameSeconds--;
-          updateTimeMultiplayer(gameSeconds);
-          fpsToSeconds = 0;
+            if (fpsToSeconds > FRAMESTOSECONDS)
+            {
+                gameSeconds--;
+                updateTimeMultiplayer(gameSeconds);
+                fpsToSeconds = 0;
+            }
         }
-      }
-      else
-      {
-        // game over
-      }
+        else
+        {
+            // game over
+        }
     }
 
     if (selectPinCount > SELECTEDPINCOUNT)
     {
-      changeColorPinMultiplayer();
-      inputCodeMultiplayer();
+        changeColorPinMultiplayer();
+        inputCodeMultiplayer();
 
-      selectPinCount = 0;
+        selectPinCount = 0;
     }
 
     if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
     {
-      drawCodeMultiplayer();
+        drawCodeMultiplayer();
 
-      changeColorCodeOpponentCount = 0;
+        changeColorCodeOpponentCount = 0;
     }
 }
