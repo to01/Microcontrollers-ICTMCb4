@@ -16,6 +16,11 @@
 #define CHUNKSIZE 32
 #define BUFFERLEN 256
 
+#define FPS 100
+#define CLOCKRATE 38000000
+
+const uint16_t ticksPerFrame = FPS * (CLOCKRATE / 10000000); // 100 FPS = 380 tpf
+
 enum GameState
 {
   MENUPLAYERS,
@@ -53,11 +58,12 @@ int main(void)
 {
   setup();
 
-  // drawCodeOpponent();
   drawPlayingField();
+  //  drawCodeOpponent();
   while (1)
   {
-    loopMultiplayer();
+    multiplayerLoop(ticksPerFrame);
+    //  codeOpponentLoop(ticksPerFrame);
   }
   return 0;
 }

@@ -75,6 +75,31 @@ void drawCodeOpponent()
     blinkCurrentPin(HEIGHT_CODEOPPONENT, (15 + RADIUS_CODEOPPONENT * 2) * (currentPin + 1), RADIUS_CODEOPPONENT);
 }
 
+extern uint16_t ticksSinceLastUpdate; // ticks since last display update
+
+// function repeatedly called by main loop
+// used for all codeOpponent logic
+void codeOpponentLoop(const uint16_t ticksPerFrame)
+{
+    if (ticksSinceLastUpdate > ticksPerFrame)
+    {
+      selectPinCodeOpponent();
+      ticksSinceLastUpdate = 0;
+    }
+
+    if (selectPinCount > SELECTEDPINCOUNT)
+    {
+      changeColorCodeOpponent();
+      selectPinCount = 0;
+    }
+
+    if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
+    {
+      drawCodeOpponent();
+      changeColorCodeOpponentCount = 0;
+    }
+}
+
 // function to get the binary code for the infraredprotocol of the color code
 // use this function after the player has selected the colors and pressed the send-button
 uint16_t getColorCodeBinary()

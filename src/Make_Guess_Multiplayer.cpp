@@ -234,43 +234,44 @@ void checkIfGuessedCodeIsCorrectMultiplayer()
     }
 }
 
-// function loop for multiplayerscreen
-void loopMultiplayer()
+// function repeatedly called by main loop
+// used for all multiplayerLoop logic
+void multiplayerLoop(const uint16_t ticksPerFrame)
 {
-    if (ticksSinceLastUpdate > FPS) // 100FPS
+    if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
     {
-        selectPinMultiplayer();
+      selectPinMultiplayer();
 
-        ticksSinceLastUpdate = 0;
-        fpsToSeconds++;
+      ticksSinceLastUpdate = 0;
+      fpsToSeconds++;
 
-        if (gameSeconds > 0)
+      if (gameSeconds > 0)
+      {
+        if (fpsToSeconds > FRAMESTOSECONDS)
         {
-            if (fpsToSeconds > FRAMESTOSECONDS)
-            {
-                gameSeconds--;
-                updateTimeMultiplayer(gameSeconds);
-                fpsToSeconds = 0;
-            }
+          gameSeconds--;
+          updateTimeMultiplayer(gameSeconds);
+          fpsToSeconds = 0;
         }
-        else
-        {
-            // game over
-        }
+      }
+      else
+      {
+        // game over
+      }
     }
 
     if (selectPinCount > SELECTEDPINCOUNT)
     {
-        changeColorPinMultiplayer();
-        inputCodeMultiplayer();
+      changeColorPinMultiplayer();
+      inputCodeMultiplayer();
 
-        selectPinCount = 0;
+      selectPinCount = 0;
     }
 
     if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
     {
-        drawCodeMultiplayer();
+      drawCodeMultiplayer();
 
-        changeColorCodeOpponentCount = 0;
+      changeColorCodeOpponentCount = 0;
     }
 }

@@ -51,6 +51,6 @@ void giveFeedbackMultiplayer(void); // function to give feedback
 
 void checkIfGuessedCodeIsCorrectMultiplayer(void); // function to check if the guessed code is correct
 
-void loopMultiplayer(void); // function loop for multiplayerscreen
+void multiplayerLoop(const uint16_t ticksPerFrame); // function called repeatedly by main loop
 
 #endif // _MAKE_GUESS_MULTIPLAYER_
