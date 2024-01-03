@@ -6,4 +6,6 @@
 
 void showWinner(); // function to show the winner
 
+void showLoser(); // function to show the loser
+
 #endif // END_GAME_H

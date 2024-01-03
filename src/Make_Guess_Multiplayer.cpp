@@ -253,7 +253,7 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
         }
         else
         {
-            // game over
+            showLoser();
         }
     }
 
