@@ -20,6 +20,8 @@
 #define CHANGECOLORCODEOPPONENTCOUNT 3
 #define BACKGROUNDCOLORGAME 0x0500
 
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
+
 extern Menu startMenu;
 extern Menu gameModeMenu;
 extern Menu singlePlayerMenu;
@@ -39,6 +41,7 @@ int main(void)
   Serial.begin(9600);
   Nunchuk.begin(0x52);
   Direction curdir;
+  drawMenu(&startMenu);
   while (1)
   {
     curdir = getNunchukDirection();
