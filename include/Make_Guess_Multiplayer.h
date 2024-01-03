@@ -10,6 +10,8 @@
 #define TFT_DC 9
 #define TFT_CS 10
 
+#define FPS 380
+
 // values for the playing field
 #define STARTVALUEXGUESS 20
 #define STARTVALUEXFEEDBACK 114

@@ -21,6 +21,15 @@
 
 const uint16_t ticksPerFrame = FPS * (CLOCKRATE / 10000000); // 100 FPS = 380 tpf
 
+enum GameState
+{
+  MENUPLAYERS,
+  MENUGAMEMODE,
+  GAMECODEOPPONENT,
+  GAMEMULTIPLAYER,
+  ENDGAME
+};
+
 void timerSetup(void)
 {
   TIMSK0 |= (1 << OCIE0A); // enable comp match a interrupt
