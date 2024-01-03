@@ -17,6 +17,7 @@
 #define ITEM_FONT_SIZE 2
 
 #define MENU_ARRAY_SIZE 3  // a menu always has a max of 3 items
+#define MENUHOLDER_ARRAY_SIZE 3  // a menu always has a max of 3 items
 
 //positions
 #define SELECT_XPOS 20     // distance from the text to where the selection circle is drawn
@@ -45,12 +46,21 @@ struct Menu
     uint8_t itemSelected;
 };
 
+struct MenuHolder   
+{
+    Menu MenuArray[MENUHOLDER_ARRAY_SIZE];
+    uint8_t selectedMenu;
+};
+
 void drawMenu(Menu *menu);
 void drawBackground();
 
 void drawMenuItem(MenuItem item);
 void selectMenuItem(MenuItem* item);
 void deselectMenuItem(MenuItem* item);
+
+void executeAction();
+void switchMenuItems(Menu menu, Direction direction);
 
 void goToGameMenu();
 void goToSingleplayerMenu();

@@ -19,6 +19,9 @@
   MenuItem hardDifficultyItem = {"hard"};
   Menu singlePlayerMenu = {"Difficulty", true, {easyDifficultyItem,mediumDifficultyItem,hardDifficultyItem}};
 
+  //the menu holder holds the above menus and keeps track of the current menu
+  MenuHolder menuHolder = {{startMenu,gameModeMenu,singlePlayerMenu},0}; //NOTE: FIND A WAY TO MAKE THE ZERO HERE UNNECESSARY (constructors?)
+
 //prints the title of a menu followed by all the menu items in their respective positions
 void drawMenu(Menu *menu)
 {
@@ -78,13 +81,38 @@ void deselectMenuItem(MenuItem* item)
     tft.print(item->title);
 }
 
+//check the joystick, if up or down, change what item is selected
+void switchMenuItems(Menu menu, Direction direction)
+{
+    switch (direction)
+    {
+    case Up:
+            deselectMenuItem(&menu.itemArray[menu.itemSelected]);
+            Serial.println("up");
+        break;
+    case Down:
+        Serial.println("down");
+        break;
+    default:
+        break;
+    }
+}
+
 //functions called by menuItems VVV
+void goToStartMenu()
+{
+    drawMenu(&startMenu);
+    menuHolder.selectedMenu = 0; //NOTE: DE-MAGIC THIS!
+}
+
 void goToGameMenu()
 {
     drawMenu(&gameModeMenu);
+    menuHolder.selectedMenu = 1; //NOTE: DE-MAGIC THIS!
 }
 
 void goToSingleplayerMenu()
 {
     drawMenu(&singlePlayerMenu);
+    menuHolder.selectedMenu = 2; //NOTE: DE-MAGIC THIS!
 }

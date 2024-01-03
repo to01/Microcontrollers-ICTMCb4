@@ -20,6 +20,7 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 extern Menu startMenu;
 extern Menu gameModeMenu;
 extern Menu singlePlayerMenu;
+extern MenuHolder menuHolder;
 
 /*
 void updateDisplay(uint16_t *posXp, uint16_t *posYp)
@@ -63,12 +64,13 @@ void setup(void)
 int main(void)
 {
   setup();
-  drawMenu(&startMenu);
-  drawMenu(&gameModeMenu);
-  drawMenu(&startMenu);
+  Serial.begin(9600);
+  Nunchuk.begin(0x52);
+  Direction curdir;
   while (1)
   {
-
+    curdir = getNunchukDirection();
+    Serial.println(curdir);
   }
   return 0;
 }
