@@ -1,8 +1,8 @@
 #ifndef MENU_H_
 #define MENU_H_
 
-#include <avr/io.h>
 #include "Adafruit_ILI9341.h"
+#include "Nunchuk_state.h"
 
 #define BACKGROUNDCOLOUR 0x0500 // 5-6-5 color code for dark green
 
@@ -23,6 +23,7 @@
 #define SELECT_YPOS 10     // distance to center the circle with the text
 #define SELECTION_RADIUS 3 // radius of selection circle
 
+
 extern Adafruit_ILI9341 tft;
 
 //create a typedef that points to void functions
@@ -30,20 +31,18 @@ typedef void (*ActionPointer)();
 
 struct MenuItem
 {
-    char title[23];
+    const char* title;
+    //char title[MAX_MENUITEM_TITLE_SIZE];
     ActionPointer ButtonAction;
-    bool isSelected;
-    uint8_t yPosition;
-
-    void goToGameMenu();
-    void goToSingleplayerMenu();    
+    uint8_t yPosition;    
 };
 
 struct Menu
 {
-    char title[12];
+    const char* title;
     bool thirdOption;                    // does this menu have a third option?
     MenuItem itemArray[MENU_ARRAY_SIZE]; // insert MenuItems here
+    uint8_t itemSelected;
 };
 
 void drawMenu(Menu *menu);

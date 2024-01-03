@@ -1,11 +1,12 @@
 #include "Menu.h"
 
-
-void goToGameMenu();
 //the first menu on boot up
-  MenuItem SingleplayerItem = {"Singleplayer", .ButtonAction = goToSingleplayerMenu};
-  MenuItem MultiplayerItem = {"Multiplayer", .ButtonAction = goToGameMenu};
-  Menu startMenu =  {"Mastermind!", false, {SingleplayerItem,MultiplayerItem}};
+  const char* singleplayerString = "Singleplayer";
+  const char* multiplayerString = "Multiplayer";
+  const char* startMenuString = "Mastermind!";
+  MenuItem SingleplayerItem = {singleplayerString, .ButtonAction = goToSingleplayerMenu};
+  MenuItem MultiplayerItem = {multiplayerString, .ButtonAction = goToGameMenu};
+  Menu startMenu =  {startMenuString, false, {SingleplayerItem,MultiplayerItem}};
   
   //the menu when mulitplayer is selected
   MenuItem raceAgainstClocKItem = {"Against the clock"};
@@ -62,7 +63,6 @@ void drawMenuItem(MenuItem item)
 //turns the title of item to white and draws the selection cirle
 void selectMenuItem(MenuItem* item)
 {
-    item->isSelected = true;
     tft.setCursor(XPOS_MIDDLE,item->yPosition);
     tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item->yPosition + SELECT_YPOS), SELECTION_RADIUS, ILI9341_WHITE);
     tft.setTextColor(ILI9341_WHITE);
@@ -72,7 +72,6 @@ void selectMenuItem(MenuItem* item)
 //turns the title of item to darkgreen and removes the selection cirle
 void deselectMenuItem(MenuItem* item)
 {
-    item->isSelected = false;
     tft.setCursor(XPOS_MIDDLE,item->yPosition);
     tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item->yPosition + SELECT_YPOS), SELECTION_RADIUS, BACKGROUNDCOLOUR);
     tft.setTextColor(ILI9341_DARKGREEN);

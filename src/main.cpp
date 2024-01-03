@@ -64,8 +64,8 @@ int main(void)
 {
   setup();
   drawMenu(&startMenu);
-  startMenu.itemArray[0].ButtonAction();
-
+  drawMenu(&gameModeMenu);
+  drawMenu(&startMenu);
   while (1)
   {
 
