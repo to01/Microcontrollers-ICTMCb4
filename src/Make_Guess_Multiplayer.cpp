@@ -178,7 +178,7 @@ void giveFeedbackMultiplayer()
     {
         for (uint8_t j = 0; j < 4; j++)
         {
-            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode && feedbackArray[j] == 0)
+            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode)
             {
                 feedbackArray[j] = 1;
                 break;
