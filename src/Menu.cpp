@@ -1,8 +1,10 @@
 #include "Menu.h"
+
+
 void goToGameMenu();
 //the first menu on boot up
-  MenuItem SingleplayerItem = {"Singleplayer"}; 
-  MenuItem MultiplayerItem = {"Multiplayer"};
+  MenuItem SingleplayerItem = {"Singleplayer", .ButtonAction = goToSingleplayerMenu};
+  MenuItem MultiplayerItem = {"Multiplayer", .ButtonAction = goToGameMenu};
   Menu startMenu =  {"Mastermind!", false, {SingleplayerItem,MultiplayerItem}};
   
   //the menu when mulitplayer is selected

@@ -64,11 +64,8 @@ int main(void)
 {
   setup();
   drawMenu(&startMenu);
-  Serial.begin(9600);
-  Serial.println(startMenu.itemArray[0].isSelected);
-  deselectMenuItem(&startMenu.itemArray[0]);
-  selectMenuItem(&startMenu.itemArray[1]);
-  Serial.println(startMenu.itemArray[0].isSelected);
+  startMenu.itemArray[0].ButtonAction();
+
   while (1)
   {
 

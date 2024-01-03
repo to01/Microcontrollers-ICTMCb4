@@ -25,18 +25,24 @@
 
 extern Adafruit_ILI9341 tft;
 
+//create a typedef that points to void functions
+typedef void (*ActionPointer)();
+
 struct MenuItem
 {
     char title[23];
-    void (*function)();
+    ActionPointer ButtonAction;
     bool isSelected;
     uint8_t yPosition;
+
+    void goToGameMenu();
+    void goToSingleplayerMenu();    
 };
 
 struct Menu
 {
     char title[12];
-    bool thirdOption;                    // does this item have a third option?
+    bool thirdOption;                    // does this menu have a third option?
     MenuItem itemArray[MENU_ARRAY_SIZE]; // insert MenuItems here
 };
 
