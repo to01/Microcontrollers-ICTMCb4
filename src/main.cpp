@@ -16,7 +16,10 @@
 #define CHUNKSIZE 32
 #define BUFFERLEN 256
 
-#define FPS 380
+#define FPS 100
+#define CLOCKRATE 38000000
+
+const uint16_t ticksPerFrame = FPS * (CLOCKRATE / 10000000); // 100 FPS = 380 tpf
 
 void timerSetup(void)
 {
@@ -46,50 +49,10 @@ int main(void)
 {
   setup();
 
-  // drawCodeOpponent();
-  drawPlayingField();
+  drawCodeOpponent();
   while (1)
   {
-    // updateSegmentDisplay();
-    if (ticksSinceLastUpdate > FPS) // 100FPS
-    {
-      // selectPinCodeOpponent();
-      selectPinMultiplayer();
-
-      ticksSinceLastUpdate = 0;
-      fpsToSeconds++;
-
-      if (gameSeconds > 0)
-      {
-        if (fpsToSeconds > FRAMESTOSECONDS)
-        {
-          gameSeconds--;
-          updateTimeMultiplayer(gameSeconds);
-          fpsToSeconds = 0;
-        }
-      }
-      else
-      {
-        // game over
-      }
-    }
-
-    if (selectPinCount > SELECTEDPINCOUNT)
-    {
-      // changeColorCodeOpponent();
-      changeColorPinMultiplayer();
-      inputCodeMultiplayer();
-
-      selectPinCount = 0;
-    }
-
-    if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
-    {
-      // drawCodeOpponent();
-      drawCodeMultiplayer();
-
-      changeColorCodeOpponentCount = 0;
-    }
+    codeOpponentLoop(ticksPerFrame);
   }
   return 0;
 }

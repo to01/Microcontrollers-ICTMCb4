@@ -18,6 +18,8 @@ void selectPinCodeOpponent(void); // function to select the pin
 
 void drawCodeOpponent(void); // function to draw the pins
 
+void codeOpponentLoop(const uint16_t ticksPerFrame); // function repeatedly called by main loop
+
 uint16_t getColorCodeBinary(void); // function to get the color code in binary
 
 #endif // _CHOOSE_CODE_OPPONENT_
