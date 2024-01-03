@@ -4,6 +4,8 @@
 #include "Adafruit_ILI9341.h"
 #include "Queue.h"
 #include "Make_Code_Mechanics.h"
+#include "IR_Communication.h"
+#include "End_Game.h"
 
 #define TFT_DC 9
 #define TFT_CS 10
@@ -44,5 +46,7 @@ void inputCodeMultiplayer(void); // function to input the code
 void setColorCodeReceivedFromOpponentToArray(void); // function to set the color code received from the opponent to an array
 
 void giveFeedbackMultiplayer(void); // function to give feedback
+
+void checkIfGuessedCodeIsCorrectMultiplayer(void); // function to check if the guessed code is correct
 
 #endif // _MAKE_GUESS_MULTIPLAYER_

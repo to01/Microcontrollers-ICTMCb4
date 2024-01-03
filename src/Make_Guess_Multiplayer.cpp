@@ -2,7 +2,7 @@
 
 Queue previousGuessQueue = Queue(); // queue for the previous guesses
 
-uint16_t colorCodeReceivedFromOpponent = 0x4231; // variable to store the color code received from the opponent
+uint16_t colorCodeReceivedFromOpponent = 0x0101; // variable to store the color code received from the opponent
 
 uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
 
@@ -151,6 +151,7 @@ void inputCodeMultiplayer()
         storePreviousGuessMultiplayer();
         drawPreviousGuessMultiplayer();
         giveFeedbackMultiplayer();
+        sendBits(getColorCodeBinary()); // sends the guess to the opponent
         currentPin = 0;
 
         blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
@@ -210,5 +211,25 @@ void giveFeedbackMultiplayer()
         {
             tft.fillCircle(STARTVALUEXFEEDBACK + STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
         }
+    }
+    checkIfGuessedCodeIsCorrectMultiplayer();
+}
+
+// function to check if the guessed code is correct and give the win
+void checkIfGuessedCodeIsCorrectMultiplayer()
+{
+    uint8_t correctGuesses = 0;
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        {
+            correctGuesses++;
+        }
+    }
+
+    if (correctGuesses == 4)
+    {
+        showWinner();
     }
 }

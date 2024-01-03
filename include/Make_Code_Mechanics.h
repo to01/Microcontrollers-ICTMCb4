@@ -52,4 +52,6 @@ void changeColorPin(uint8_t currentPin); // function to change the color of the 
 
 void blinkCurrentPin(uint8_t valueXCurrentPin, uint16_t valueYCurrentPin, uint8_t valueRadiusCurrentPin); // function to blink the current pin
 
+uint16_t getColorCodeBinary(void); // function to get the color code in binary
+
 #endif // _MAKE_CODE_MECHANICS_

@@ -7,6 +7,8 @@
 #include "Make_Code_Mechanics.h"
 #include "Make_Code_Opponent.h"
 #include "Make_Guess_Multiplayer.h"
+#include "Game_Timer.h"
+#include "End_Game.h"
 
 #define TFT_DC 9
 #define TFT_CS 10
@@ -55,6 +57,21 @@ int main(void)
       selectPinMultiplayer();
 
       ticksSinceLastUpdate = 0;
+      fpsToSeconds++;
+
+      if (gameSeconds > 0)
+      {
+        if (fpsToSeconds > FRAMESTOSECONDS)
+        {
+          gameSeconds--;
+          updateTimeMultiplayer(gameSeconds);
+          fpsToSeconds = 0;
+        }
+      }
+      else
+      {
+        // game over
+      }
     }
 
     if (selectPinCount > SELECTEDPINCOUNT)
