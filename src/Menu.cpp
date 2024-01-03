@@ -1,12 +1,12 @@
 #include "Menu.h"
-
+void goToGameMenu();
 //the first menu on boot up
   MenuItem SingleplayerItem = {"Singleplayer"}; 
   MenuItem MultiplayerItem = {"Multiplayer"};
   Menu startMenu =  {"Mastermind!", false, {SingleplayerItem,MultiplayerItem}};
   
   //the menu when mulitplayer is selected
-  MenuItem raceAgainstClocKItem = {"against the clock"};
+  MenuItem raceAgainstClocKItem = {"Against the clock"};
   MenuItem leastMovesItem = {"Least turns wins"};
   Menu gameModeMenu = {"Gamemode", false, {raceAgainstClocKItem,leastMovesItem}};
 

@@ -28,9 +28,9 @@ extern Adafruit_ILI9341 tft;
 struct MenuItem
 {
     char title[23];
+    void (*function)();
     bool isSelected;
     uint8_t yPosition;
-    void (*function)();
 };
 
 struct Menu
