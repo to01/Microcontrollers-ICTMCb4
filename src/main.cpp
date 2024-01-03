@@ -50,11 +50,11 @@ int main(void)
   setup();
 
   drawPlayingField();
-//  drawCodeOpponent();
+  //  drawCodeOpponent();
   while (1)
   {
     multiplayerLoop(ticksPerFrame);
-//    codeOpponentLoop(ticksPerFrame);
+    //  codeOpponentLoop(ticksPerFrame);
   }
   return 0;
 }
