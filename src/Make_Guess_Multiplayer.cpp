@@ -233,3 +233,44 @@ void checkIfGuessedCodeIsCorrectMultiplayer()
         showWinner();
     }
 }
+
+// function loop for multiplayerscreen
+void loopMultiplayer()
+{
+    if (ticksSinceLastUpdate > FPS) // 100FPS
+    {
+        selectPinMultiplayer();
+
+        ticksSinceLastUpdate = 0;
+        fpsToSeconds++;
+
+        if (gameSeconds > 0)
+        {
+            if (fpsToSeconds > FRAMESTOSECONDS)
+            {
+                gameSeconds--;
+                updateTimeMultiplayer(gameSeconds);
+                fpsToSeconds = 0;
+            }
+        }
+        else
+        {
+            // game over
+        }
+    }
+
+    if (selectPinCount > SELECTEDPINCOUNT)
+    {
+        changeColorPinMultiplayer();
+        inputCodeMultiplayer();
+
+        selectPinCount = 0;
+    }
+
+    if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
+    {
+        drawCodeMultiplayer();
+
+        changeColorCodeOpponentCount = 0;
+    }
+}

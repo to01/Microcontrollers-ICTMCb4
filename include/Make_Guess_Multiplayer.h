@@ -10,6 +10,8 @@
 #define TFT_DC 9
 #define TFT_CS 10
 
+#define FPS 380
+
 // values for the playing field
 #define STARTVALUEXGUESS 20
 #define STARTVALUEXFEEDBACK 114
@@ -48,5 +50,7 @@ void setColorCodeReceivedFromOpponentToArray(void); // function to set the color
 void giveFeedbackMultiplayer(void); // function to give feedback
 
 void checkIfGuessedCodeIsCorrectMultiplayer(void); // function to check if the guessed code is correct
+
+void loopMultiplayer(void); // function loop for multiplayerscreen
 
 #endif // _MAKE_GUESS_MULTIPLAYER_

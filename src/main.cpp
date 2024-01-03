@@ -16,7 +16,14 @@
 #define CHUNKSIZE 32
 #define BUFFERLEN 256
 
-#define FPS 380
+enum GameState
+{
+  MENUPLAYERS,
+  MENUGAMEMODE,
+  GAMECODEOPPONENT,
+  GAMEMULTIPLAYER,
+  ENDGAME
+};
 
 void timerSetup(void)
 {
@@ -50,46 +57,7 @@ int main(void)
   drawPlayingField();
   while (1)
   {
-    // updateSegmentDisplay();
-    if (ticksSinceLastUpdate > FPS) // 100FPS
-    {
-      // selectPinCodeOpponent();
-      selectPinMultiplayer();
-
-      ticksSinceLastUpdate = 0;
-      fpsToSeconds++;
-
-      if (gameSeconds > 0)
-      {
-        if (fpsToSeconds > FRAMESTOSECONDS)
-        {
-          gameSeconds--;
-          updateTimeMultiplayer(gameSeconds);
-          fpsToSeconds = 0;
-        }
-      }
-      else
-      {
-        // game over
-      }
-    }
-
-    if (selectPinCount > SELECTEDPINCOUNT)
-    {
-      // changeColorCodeOpponent();
-      changeColorPinMultiplayer();
-      inputCodeMultiplayer();
-
-      selectPinCount = 0;
-    }
-
-    if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
-    {
-      // drawCodeOpponent();
-      drawCodeMultiplayer();
-
-      changeColorCodeOpponentCount = 0;
-    }
+    loopMultiplayer();
   }
   return 0;
 }
