@@ -36,15 +36,13 @@ void changeColorPinMultiplayer(void); // function to change the color of the cur
 
 void drawCodeMultiplayer(void); // function to draw the code
 
-void drawPreviousGuessMultiplayer(void); // function to draw the previous guesses
+void drawPreviousGuess(void); // function to draw the previous guesses
 
 void inputCodeMultiplayer(void); // function to input the code
 
 void giveFeedbackGuess(void); // function to give feedback
 
-void drawFeedbackGuess(void); // function to draw the feedback
-
-void drawFeedbackGuessOpponent(void); // function to draw the feedback from the opponent
+void giveFeedbackGuessOpponent(void); // function to draw the feedback from the opponent
 
 void multiplayerLoop(const uint16_t ticksPerFrame); // function called repeatedly by main loop
 

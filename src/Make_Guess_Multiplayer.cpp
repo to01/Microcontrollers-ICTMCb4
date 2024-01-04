@@ -196,6 +196,55 @@ void giveFeedbackGuess()
     checkIfGuessedCodeIsCorrect();
 }
 
+// function to draw the feedback from the opponent
+void giveFeedbackGuessOpponent()
+{
+    uint8_t feedbackArray[4] = {0, 0, 0, 0};
+    uint8_t colorCount[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        colorCount[colorCodeArray[i].gameColors.colorCode]++;
+    }
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            if (colorCodeArray[i].gameColors.colorCode == colorCodeArray[j].gameColors.colorCode && colorCount[colorCodeArray[j].gameColors.colorCode] > 0)
+            {
+                feedbackArray[i] = 1;
+                colorCount[colorCodeArray[j].gameColors.colorCode]--;
+                break;
+            }
+        }
+    }
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (colorCodeArray[i].gameColors.colorCode == colorCodeArray[i].gameColors.colorCode)
+        {
+            feedbackArray[i] = 2;
+        }
+    }
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (feedbackArray[i] == 0)
+        {
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
+        }
+        else if (feedbackArray[i] == 1)
+        {
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
+        }
+        else if (feedbackArray[i] == 2)
+        {
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
+        }
+    }
+}
+
 // function repeatedly called by main loop
 // used for all multiplayerLoop logic
 void multiplayerLoop(const uint16_t ticksPerFrame)
