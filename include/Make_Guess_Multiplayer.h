@@ -5,7 +5,8 @@
 #include "Queue.h"
 #include "Make_Code_Mechanics.h"
 #include "IR_Communication.h"
-#include "End_Game.h"
+// #include "End_Game.h"
+#include "Colorcode_Logic.h"
 
 #define TFT_DC 9
 #define TFT_CS 10
@@ -27,10 +28,6 @@
 
 extern Adafruit_ILI9341 tft; // define the tft screen
 
-extern Queue previousGuessQueue; // queue for the previous guesses
-
-extern uint16_t colorCodeReceivedFromOpponent; // variable to store the color code received from the opponent
-
 void drawPlayingField(void); // function to draw the playing field
 
 void selectPinMultiplayer(void); // function to change the selected pin
@@ -39,17 +36,15 @@ void changeColorPinMultiplayer(void); // function to change the color of the cur
 
 void drawCodeMultiplayer(void); // function to draw the code
 
-void storePreviousGuessMultiplayer(void); // function to store the previous guess
-
 void drawPreviousGuessMultiplayer(void); // function to draw the previous guesses
 
 void inputCodeMultiplayer(void); // function to input the code
 
-void setColorCodeReceivedFromOpponentToArray(void); // function to set the color code received from the opponent to an array
+void giveFeedbackGuess(void); // function to give feedback
 
-void giveFeedbackMultiplayer(void); // function to give feedback
+void drawFeedbackGuess(void); // function to draw the feedback
 
-void checkIfGuessedCodeIsCorrectMultiplayer(void); // function to check if the guessed code is correct
+void drawFeedbackGuessOpponent(void); // function to draw the feedback from the opponent
 
 void multiplayerLoop(const uint16_t ticksPerFrame); // function called repeatedly by main loop
 

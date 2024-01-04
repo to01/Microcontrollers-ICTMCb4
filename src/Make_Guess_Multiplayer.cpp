@@ -119,20 +119,8 @@ void drawCodeMultiplayer()
     blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
 }
 
-// function to store the previous guesses in a queue
-void storePreviousGuessMultiplayer()
-{
-    GameColors tempArray[4] = {
-        colorCodeArray[0].gameColors,
-        colorCodeArray[1].gameColors,
-        colorCodeArray[2].gameColors,
-        colorCodeArray[3].gameColors};
-
-    previousGuessQueue.enqueue(tempArray, 4);
-}
-
 // function to draw the previous guesses
-void drawPreviousGuessMultiplayer()
+void drawPreviousGuess()
 {
     for (uint8_t i = 0; i < previousGuessQueue.rear + 1; i++)
     {
@@ -148,9 +136,9 @@ void inputCodeMultiplayer()
 {
     if (Nunchuk.state.z_button > 0)
     {
-        storePreviousGuessMultiplayer();
-        drawPreviousGuessMultiplayer();
-        giveFeedbackMultiplayer();
+        storePreviousGuess();
+        drawPreviousGuess();
+        giveFeedbackGuess();
         sendBits(getColorCodeBinary()); // sends the guess to the opponent
         currentPin = 0;
 
@@ -158,29 +146,25 @@ void inputCodeMultiplayer()
     }
 }
 
-// function to set the color code received from the opponent to an array
-void setColorCodeReceivedFromOpponentToArray()
-{
-    // uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
-
-    colorCodeReceivedFromOpponentArray[0] = colorCodeReceivedFromOpponent >> 12 & 0b1111;
-    colorCodeReceivedFromOpponentArray[1] = colorCodeReceivedFromOpponent >> 8 & 0b1111;
-    colorCodeReceivedFromOpponentArray[2] = colorCodeReceivedFromOpponent >> 4 & 0b1111;
-    colorCodeReceivedFromOpponentArray[3] = colorCodeReceivedFromOpponent & 0b1111;
-}
-
 // function to check if the code is correct and to give feedback
-void giveFeedbackMultiplayer()
+void giveFeedbackGuess()
 {
     uint8_t feedbackArray[4] = {0, 0, 0, 0};
+    uint8_t colorCount[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        colorCount[colorCodeArray[i].gameColors.colorCode]++;
+    }
 
     for (uint8_t i = 0; i < 4; i++)
     {
         for (uint8_t j = 0; j < 4; j++)
         {
-            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode)
+            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode && colorCount[colorCodeArray[j].gameColors.colorCode] > 0)
             {
-                feedbackArray[j] = 1;
+                feedbackArray[i] = 1;
+                colorCount[colorCodeArray[j].gameColors.colorCode]--;
                 break;
             }
         }
@@ -209,26 +193,7 @@ void giveFeedbackMultiplayer()
             tft.fillCircle(STARTVALUEXFEEDBACK + STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
         }
     }
-    checkIfGuessedCodeIsCorrectMultiplayer();
-}
-
-// function to check if the guessed code is correct and give the win
-void checkIfGuessedCodeIsCorrectMultiplayer()
-{
-    uint8_t correctGuesses = 0;
-
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
-        {
-            correctGuesses++;
-        }
-    }
-
-    if (correctGuesses == 4)
-    {
-        showWinner();
-    }
+    checkIfGuessedCodeIsCorrect();
 }
 
 // function repeatedly called by main loop
@@ -253,7 +218,7 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
         }
         else
         {
-            showLoser();
+            // showLoser();
         }
     }
 

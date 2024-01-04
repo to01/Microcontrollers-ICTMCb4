@@ -10,8 +10,6 @@
 #include "Game_Timer.h"
 #include "End_Game.h"
 
-#define TFT_DC 9
-#define TFT_CS 10
 #define BAUDRATE 9600
 #define CHUNKSIZE 32
 #define BUFFERLEN 256
