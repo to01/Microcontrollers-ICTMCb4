@@ -163,7 +163,7 @@ void giveFeedbackGuess()
         {
             if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode && colorCount[colorCodeArray[j].gameColors.colorCode] > 0)
             {
-                feedbackArray[i] = 1;
+                feedbackArray[j] = 1;
                 colorCount[colorCodeArray[j].gameColors.colorCode]--;
                 break;
             }
