@@ -1,4 +1,4 @@
-#include "Make_Guess_Multiplayer.h"
+#include "Multiplayer.h"
 
 Queue previousGuessQueue = Queue(); // queue for the previous guesses
 
@@ -150,24 +150,13 @@ void inputCodeMultiplayer()
 void giveFeedbackGuess()
 {
     uint8_t feedbackArray[4] = {0, 0, 0, 0};
-    uint8_t colorCount[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t colorCountGuess[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t colorCountCodeOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        colorCount[colorCodeArray[i].gameColors.colorCode]++;
-    }
-
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        for (uint8_t j = 0; j < 4; j++)
-        {
-            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[j].gameColors.colorCode && colorCount[colorCodeArray[j].gameColors.colorCode] > 0)
-            {
-                feedbackArray[j] = 1;
-                colorCount[colorCodeArray[j].gameColors.colorCode]--;
-                break;
-            }
-        }
+        colorCountGuess[colorCodeArray[i].gameColors.colorCode]++;
+        colorCountCodeOpponent[colorCodeReceivedFromOpponentArray[i]]++;
     }
 
     for (uint8_t i = 0; i < 4; i++)
@@ -175,6 +164,24 @@ void giveFeedbackGuess()
         if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
         {
             feedbackArray[i] = 2;
+            colorCountGuess[colorCodeArray[i].gameColors.colorCode]--;
+            colorCountCodeOpponent[colorCodeArray[i].gameColors.colorCode]--;
+        }
+    }
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (feedbackArray[i] != 2)
+        {
+            for (uint8_t j = 0; j < 4; j++)
+            {
+                if (colorCountGuess[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCodeOpponent[colorCodeArray[i].gameColors.colorCode] > 0)
+                {
+                    feedbackArray[i] = 1;
+                    colorCountGuess[colorCodeArray[i].gameColors.colorCode]--;
+                    colorCountCodeOpponent[colorCodeArray[i].gameColors.colorCode]--;
+                }
+            }
         }
     }
 
@@ -200,31 +207,38 @@ void giveFeedbackGuess()
 void giveFeedbackGuessOpponent()
 {
     uint8_t feedbackArray[4] = {0, 0, 0, 0};
-    uint8_t colorCount[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        colorCount[colorCodeArray[i].gameColors.colorCode]++;
+        colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
+        // colorCountCode[colorCodeReceivedFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
     }
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        for (uint8_t j = 0; j < 4; j++)
+        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
         {
-            if (colorCodeArray[i].gameColors.colorCode == colorCodeArray[j].gameColors.colorCode && colorCount[colorCodeArray[j].gameColors.colorCode] > 0)
-            {
-                feedbackArray[i] = 1;
-                colorCount[colorCodeArray[j].gameColors.colorCode]--;
-                break;
-            }
+            feedbackArray[i] = 2;
+            colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
+            colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
         }
     }
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        if (colorCodeArray[i].gameColors.colorCode == colorCodeArray[i].gameColors.colorCode)
+        if (feedbackArray[i] != 2)
         {
-            feedbackArray[i] = 2;
+            for (uint8_t j = 0; j < 4; j++)
+            {
+                if (colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCode[colorCodeArray[i].gameColors.colorCode] > 0)
+                {
+                    feedbackArray[i] = 1;
+                    colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
+                    colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
+                }
+            }
         }
     }
 

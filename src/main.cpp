@@ -6,7 +6,7 @@
 #include "IR_Communication.h"
 #include "Make_Code_Mechanics.h"
 #include "Make_Code_Opponent.h"
-#include "Make_Guess_Multiplayer.h"
+#include "Multiplayer.h"
 #include "Game_Timer.h"
 #include "End_Game.h"
 

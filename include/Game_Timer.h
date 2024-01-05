@@ -1,7 +1,7 @@
 #ifndef GAME_TIMER_H
 #define GAME_TIMER_H
 
-#include "Make_Guess_Multiplayer.h"
+#include "Multiplayer.h"
 
 #define FRAMESTOSECONDS 180 // 180 frames is 1 second
 

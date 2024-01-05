@@ -1,5 +1,5 @@
-#ifndef _MAKE_GUESS_MULTIPLAYER_
-#define _MAKE_GUESS_MULTIPLAYER_
+#ifndef _MULTIPLAYER_
+#define _MULTIPLAYER_
 
 #include "Adafruit_ILI9341.h"
 #include "Queue.h"
@@ -46,4 +46,4 @@ void giveFeedbackGuessOpponent(void); // function to draw the feedback from the 
 
 void multiplayerLoop(const uint16_t ticksPerFrame); // function called repeatedly by main loop
 
-#endif // _MAKE_GUESS_MULTIPLAYER_
+#endif // _MULTIPLAYER_
