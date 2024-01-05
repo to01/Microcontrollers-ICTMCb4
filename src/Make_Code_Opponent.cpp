@@ -67,11 +67,29 @@ void selectPinCodeOpponent()
 // function to draw the first pins whit their color
 void drawCodeOpponent()
 {
+    tft.setRotation(1);
+    tft.setCursor(80, 35);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setTextSize(2);
+    tft.print("Make a Code for");
+    tft.setCursor(90, 55);
+    tft.print("your Opponent");
+    tft.setRotation(0);
+    
     for (uint8_t cg = 0; cg < 4; cg++)
     {
         tft.fillCircle(HEIGHT_CODEOPPONENT, (15 + RADIUS_CODEOPPONENT * 2) * (cg + 1), RADIUS_CODEOPPONENT, gameColorsArray[colorCodeArray[cg].currentGameColors].ILI9341Color);
     }
     blinkCurrentPin(HEIGHT_CODEOPPONENT, (15 + RADIUS_CODEOPPONENT * 2) * (currentPin + 1), RADIUS_CODEOPPONENT);
+
+    tft.setRotation(1);
+    tft.setCursor(15, 200);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setTextSize(1);
+    tft.print("Press C to Cancel");
+    tft.setCursor(195, 200);
+    tft.print("Press Z to Continue");
+    tft.setRotation(0);
 }
 
 // function repeatedly called by main loop

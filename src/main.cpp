@@ -48,12 +48,12 @@ int main(void)
 {
   setup();
 
-  drawPlayingField();
-  //  drawCodeOpponent();
+  // drawPlayingField();
+   drawCodeOpponent();
   while (1)
   {
-    multiplayerLoop(ticksPerFrame);
-    //  codeOpponentLoop(ticksPerFrame);
+    // multiplayerLoop(ticksPerFrame);
+     codeOpponentLoop(ticksPerFrame);
   }
   return 0;
 }
