@@ -59,7 +59,7 @@ int main(void)
   Serial.begin(9600);
   while (1)
   {
-    if (ticksSinceLastUpdate > FPS) // 100FPS
+    if (ticksSinceLastUpdate > FPS*10) // 100FPS
     {
       Serial.println(getNunchukDirection());
       ticksSinceLastUpdate = 0;
