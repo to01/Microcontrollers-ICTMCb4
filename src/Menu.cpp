@@ -40,7 +40,7 @@ void drawMenu(Menu *menu)
 
     for (uint8_t i = 0; i < MENU_ARRAY_SIZE; i++) //draw each item
     {
-        menu->itemArray[i].yPosition = (YPOS_START + spacer); //store the YPosition of an item to its currect YPosition on the screen
+        menu->itemArray[i].yPosition = (YPOS_START + spacer); //store the YPosition of an item to its currect YPosition on the screen;
         drawMenuItem(menu->itemArray[i]); 
 
         spacer += YPOS_SPACER; //increase the value of spacer
@@ -68,7 +68,7 @@ void selectMenuItem(MenuItem item)
     tft.setTextColor(ILI9341_WHITE);
     tft.print(item.title);
 }
-#define a 0x52
+
 //turns the title of item to darkgreen and removes the selection cirle
 void deselectMenuItem(MenuItem item)
 {
@@ -97,7 +97,7 @@ void switchMenuItems(Menu* menu, Direction direction)
             deselectMenuItem(menu->itemArray[menu->itemSelected]);
             menu->itemSelected++;
             selectMenuItem(menu->itemArray[menu->itemSelected]);
-            
+
         } else if(menu->itemSelected < 1)
         {
             deselectMenuItem(menu->itemArray[menu->itemSelected]);
@@ -110,30 +110,31 @@ void switchMenuItems(Menu* menu, Direction direction)
     }
 }
 
-void checkNunchukButton()
+bool checkNunchukButton()
 {
-    if (Nunchuk.state.z_button != previousZButtonState) //and pressed
+if (Nunchuk.state.z_button != previousZButtonState && Nunchuk.state.z_button == 0) 
   {
-
-  }
+    return true;
+  } else 
+  return false;
   previousZButtonState = Nunchuk.state.z_button;
 }
 
 //functions called by menuItems VVV
 void goToStartMenu()
 {
-    drawMenu(&startMenu);
     menuHolder.selectedMenu = 0; //NOTE: DE-MAGIC THIS!
+    drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 void goToGameMenu()
 {
-    drawMenu(&gameModeMenu);
     menuHolder.selectedMenu = 1; //NOTE: DE-MAGIC THIS!
+    drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 void goToSingleplayerMenu()
 {
-    drawMenu(&singlePlayerMenu);
     menuHolder.selectedMenu = 2; //NOTE: DE-MAGIC THIS!
+    drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }

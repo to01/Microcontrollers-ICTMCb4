@@ -58,6 +58,7 @@ void drawMenuItem(MenuItem item);
 void selectMenuItem(MenuItem item);
 void deselectMenuItem(MenuItem item);
 
+bool checkNunchukButton();
 void executeAction(MenuItem item);
 void switchMenuItems(Menu* menu, Direction direction);
 

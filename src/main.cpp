@@ -54,16 +54,17 @@ void setup(void)
 int main(void)
 {
   setup();
-  menuHolder.selectedMenu = 2;
+
   drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
   Serial.begin(9600);
+
+  menuHolder.MenuArray[menuHolder.selectedMenu].itemArray[1].ButtonAction();
 
   while (1)
   {
     if (ticksSinceLastUpdate > FPS * 10) // 100FPS
     {
       switchMenuItems(&menuHolder.MenuArray[menuHolder.selectedMenu], getNunchukDirection());
-
     }
   }
   return 0;
