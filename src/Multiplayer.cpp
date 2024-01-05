@@ -2,7 +2,7 @@
 
 Queue previousGuessQueue = Queue(); // queue for the previous guesses
 
-uint16_t colorCodeReceivedFromOpponent = 0x0101; // variable to store the color code received from the opponent
+uint16_t colorCodeReceivedFromOpponent = recievedBits; // variable to store the color code received from the opponent
 
 uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
 
@@ -213,62 +213,68 @@ void giveFeedbackGuess()
 // function to draw the feedback from the opponent
 void giveFeedbackGuessOpponent()
 {
-    uint8_t feedbackArray[4] = {0, 0, 0, 0};
-    uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // array with with a count per color of the guess
-    uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // array with with a count per color of the code
-
-    // initialize the arrays
-    for (uint8_t i = 0; i < 4; i++)
+    if (recievingIR)
     {
-        colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
-        // colorCountCode[colorCodeReceivedFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
-    }
+        guessFromOpponent = recievedBits;
+        setGuessFromOpponentToArray();
 
-    // checks if the color of the pin is correct
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        uint8_t feedbackArray[4] = {0, 0, 0, 0};
+        uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // array with with a count per color of the guess
+        uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // array with with a count per color of the code
+
+        // initialize the arrays
+        for (uint8_t i = 0; i < 4; i++)
         {
-            feedbackArray[i] = 2; // set the feedback to correct
-            // decrease the count of the color in the arrays
-            colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
-            colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
+            colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
+            colorCountCode[colorCodeReceivedFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
         }
-    }
 
-    // checks if the color of the pin is in the code but not on the right place
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        // if the pin is not correct
-        if (feedbackArray[i] != 2)
+        // checks if the color of the pin is correct
+        for (uint8_t i = 0; i < 4; i++)
         {
-            for (uint8_t j = 0; j < 4; j++)
+            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
             {
-                if (colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCode[colorCodeArray[i].gameColors.colorCode] > 0)
+                feedbackArray[i] = 2; // set the feedback to correct
+                // decrease the count of the color in the arrays
+                colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
+                colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
+            }
+        }
+
+        // checks if the color of the pin is in the code but not on the right place
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            // if the pin is not correct
+            if (feedbackArray[i] != 2)
+            {
+                for (uint8_t j = 0; j < 4; j++)
                 {
-                    feedbackArray[i] = 1; // set the feedback to almost correct
-                    // decrease the count of the color in the arrays
-                    colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
-                    colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
+                    if (colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCode[colorCodeArray[i].gameColors.colorCode] > 0)
+                    {
+                        feedbackArray[i] = 1; // set the feedback to almost correct
+                        // decrease the count of the color in the arrays
+                        colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
+                        colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
+                    }
                 }
             }
         }
-    }
 
-    // draws the feedback
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        if (feedbackArray[i] == 0)
+        // draws the feedback
+        for (uint8_t i = 0; i < 4; i++)
         {
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
-        }
-        else if (feedbackArray[i] == 1)
-        {
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
-        }
-        else if (feedbackArray[i] == 2)
-        {
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
+            if (feedbackArray[i] == 0)
+            {
+                tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
+            }
+            else if (feedbackArray[i] == 1)
+            {
+                tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
+            }
+            else if (feedbackArray[i] == 2)
+            {
+                tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 #ifndef COLORCODE_LOGIC_H
 #define COLORCODE_LOGIC_H
 
-#include "Queue.h"
 #include "End_Game.h"
 
 extern uint16_t colorCodeForOpponent; // variable to store the color code for the opponent

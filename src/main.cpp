@@ -1,13 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <Wire.h>
-#include "Adafruit_ILI9341.h"
-#include "Nunchuk.h"
-#include "IR_Communication.h"
-#include "Make_Code_Mechanics.h"
-#include "Make_Code_Opponent.h"
-#include "Multiplayer.h"
-#include "Game_Timer.h"
 #include "End_Game.h"
 
 #define BAUDRATE 9600
@@ -16,7 +9,7 @@
 
 #define CLOCKRATE 38000000
 
-const uint16_t ticksPerFrame = FPS * (CLOCKRATE / 10000000); // 100 FPS = 380 tpf
+const uint16_t ticksPerFrame = (CLOCKRATE / 100000); // 100 FPS = 380 tpf
 
 enum GameState
 {

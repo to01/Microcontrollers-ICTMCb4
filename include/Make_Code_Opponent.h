@@ -1,8 +1,6 @@
 #ifndef _CHOOSE_CODE_OPPONENT_
 #define _CHOOSE_CODE_OPPONENT_
 
-#include "Adafruit_ILI9341.h"
-#include "Nunchuk.h"
 #include "IR_Communication.h"
 #include "Make_Code_Mechanics.h"
 

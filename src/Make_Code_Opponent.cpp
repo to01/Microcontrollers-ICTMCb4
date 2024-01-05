@@ -1,4 +1,3 @@
-#include "Make_Code_Mechanics.h"
 #include "Make_Code_Opponent.h"
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);

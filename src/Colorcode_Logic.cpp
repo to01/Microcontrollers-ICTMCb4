@@ -78,3 +78,22 @@ void checkIfGuessedCodeIsCorrect()
         showWinner();
     }
 }
+
+// function to check if the guessed code from the opponent is correct and give the win
+void checkIfGuessedCodeOpponentIsCorrect()
+{
+    uint8_t correctGuesses = 0;
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (guessFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        {
+            correctGuesses++;
+        }
+    }
+
+    if (correctGuesses == 4)
+    {
+        showLoser();
+    }
+}

@@ -1,6 +1,0 @@
-#ifndef SHOW_GUESS_OPPONENT_H
-#define SHOW_GUESS_OPPONENT_H
-
-
-
-#endif // SHOW_GUESS_OPPONENT_H

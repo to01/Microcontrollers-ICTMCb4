@@ -5,13 +5,7 @@
 #include "Queue.h"
 #include "Make_Code_Mechanics.h"
 #include "IR_Communication.h"
-// #include "End_Game.h"
 #include "Colorcode_Logic.h"
-
-#define TFT_DC 9
-#define TFT_CS 10
-
-#define FPS 380
 
 // values for the playing field
 #define STARTVALUEXGUESS 20
