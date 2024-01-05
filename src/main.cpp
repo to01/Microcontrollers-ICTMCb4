@@ -54,6 +54,7 @@ void setup(void)
 int main(void)
 {
   setup();
+  menuHolder.selectedMenu = 2;
   drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
   Serial.begin(9600);
 

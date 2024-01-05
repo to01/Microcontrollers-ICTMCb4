@@ -89,14 +89,20 @@ void switchMenuItems(Menu* menu, Direction direction)
             deselectMenuItem(menu->itemArray[menu->itemSelected]);
             menu->itemSelected--;
             selectMenuItem(menu->itemArray[menu->itemSelected]);
-        }
+        } 
         break;
     case Down:
-        if(menu->itemSelected < 2)
+        if(menu->itemSelected < 2 && menu->thirdOption)
         {
             deselectMenuItem(menu->itemArray[menu->itemSelected]);
             menu->itemSelected++;
             selectMenuItem(menu->itemArray[menu->itemSelected]);
+            
+        } else if(menu->itemSelected < 1)
+        {
+            deselectMenuItem(menu->itemArray[menu->itemSelected]);
+            menu->itemSelected++;
+            selectMenuItem(menu->itemArray[menu->itemSelected]);   
         }
         break;
     default:
@@ -106,7 +112,7 @@ void switchMenuItems(Menu* menu, Direction direction)
 
 void checkNunchukButton()
 {
-    if (Nunchuk.state.z_button != previousZButtonState)
+    if (Nunchuk.state.z_button != previousZButtonState) //and pressed
   {
 
   }
