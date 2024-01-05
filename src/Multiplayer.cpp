@@ -150,34 +150,40 @@ void inputCodeMultiplayer()
 void giveFeedbackGuess()
 {
     uint8_t feedbackArray[4] = {0, 0, 0, 0};
-    uint8_t colorCountGuess[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    uint8_t colorCountCodeOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t colorCountGuess[8] = {0, 0, 0, 0, 0, 0, 0, 0};        // array with with a count per color of the guess
+    uint8_t colorCountCodeOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // array with with a count per color of the code
 
+    // initialize the arrays
     for (uint8_t i = 0; i < 4; i++)
     {
         colorCountGuess[colorCodeArray[i].gameColors.colorCode]++;
         colorCountCodeOpponent[colorCodeReceivedFromOpponentArray[i]]++;
     }
 
+    // checks if the color of the pin is correct
     for (uint8_t i = 0; i < 4; i++)
     {
         if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
         {
-            feedbackArray[i] = 2;
+            feedbackArray[i] = 2; // set the feedback to correct
+            // decrease the count of the color in the arrays
             colorCountGuess[colorCodeArray[i].gameColors.colorCode]--;
             colorCountCodeOpponent[colorCodeArray[i].gameColors.colorCode]--;
         }
     }
 
+    // checks if the color of the pin is in the code but not on the right place
     for (uint8_t i = 0; i < 4; i++)
     {
+        // if the pin is not correct
         if (feedbackArray[i] != 2)
         {
             for (uint8_t j = 0; j < 4; j++)
             {
                 if (colorCountGuess[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCodeOpponent[colorCodeArray[i].gameColors.colorCode] > 0)
                 {
-                    feedbackArray[i] = 1;
+                    feedbackArray[i] = 1; // set the feedback to almost correct
+                    // decrease the count of the color in the arrays
                     colorCountGuess[colorCodeArray[i].gameColors.colorCode]--;
                     colorCountCodeOpponent[colorCodeArray[i].gameColors.colorCode]--;
                 }
@@ -185,6 +191,7 @@ void giveFeedbackGuess()
         }
     }
 
+    // draws the feedback
     for (uint8_t i = 0; i < 4; i++)
     {
         if (feedbackArray[i] == 0)
@@ -207,34 +214,40 @@ void giveFeedbackGuess()
 void giveFeedbackGuessOpponent()
 {
     uint8_t feedbackArray[4] = {0, 0, 0, 0};
-    uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // array with with a count per color of the guess
+    uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // array with with a count per color of the code
 
+    // initialize the arrays
     for (uint8_t i = 0; i < 4; i++)
     {
         colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
         // colorCountCode[colorCodeReceivedFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
     }
 
+    // checks if the color of the pin is correct
     for (uint8_t i = 0; i < 4; i++)
     {
         if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
         {
-            feedbackArray[i] = 2;
+            feedbackArray[i] = 2; // set the feedback to correct
+            // decrease the count of the color in the arrays
             colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
             colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
         }
     }
 
+    // checks if the color of the pin is in the code but not on the right place
     for (uint8_t i = 0; i < 4; i++)
     {
+        // if the pin is not correct
         if (feedbackArray[i] != 2)
         {
             for (uint8_t j = 0; j < 4; j++)
             {
                 if (colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCode[colorCodeArray[i].gameColors.colorCode] > 0)
                 {
-                    feedbackArray[i] = 1;
+                    feedbackArray[i] = 1; // set the feedback to almost correct
+                    // decrease the count of the color in the arrays
                     colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
                     colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
                 }
@@ -242,6 +255,7 @@ void giveFeedbackGuessOpponent()
         }
     }
 
+    // draws the feedback
     for (uint8_t i = 0; i < 4; i++)
     {
         if (feedbackArray[i] == 0)
