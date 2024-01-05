@@ -32,8 +32,7 @@ typedef void (*ActionPointer)();
 
 struct MenuItem
 {
-    const char* title;
-    //char title[MAX_MENUITEM_TITLE_SIZE];
+    const char* title;;
     ActionPointer ButtonAction;
     uint8_t yPosition;    
 };
@@ -56,11 +55,11 @@ void drawMenu(Menu *menu);
 void drawBackground();
 
 void drawMenuItem(MenuItem item);
-void selectMenuItem(MenuItem* item);
-void deselectMenuItem(MenuItem* item);
+void selectMenuItem(MenuItem item);
+void deselectMenuItem(MenuItem item);
 
-void executeAction();
-void switchMenuItems(Menu menu, Direction direction);
+void executeAction(MenuItem item);
+void switchMenuItems(Menu* menu, Direction direction);
 
 void goToGameMenu();
 void goToSingleplayerMenu();

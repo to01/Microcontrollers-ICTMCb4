@@ -1,6 +1,8 @@
 #include "Menu.h"
 
 //the first menu on boot up
+volatile bool previousZButtonState;
+
   const char* singleplayerString = "Singleplayer";
   const char* multiplayerString = "Multiplayer";
   const char* startMenuString = "Mastermind!";
@@ -41,14 +43,9 @@ void drawMenu(Menu *menu)
         menu->itemArray[i].yPosition = (YPOS_START + spacer); //store the YPosition of an item to its currect YPosition on the screen
         drawMenuItem(menu->itemArray[i]); 
 
-        if (!menu->thirdOption) // if there is no third option, then skip the middle position.
-        {
-            spacer = spacer * 2;
-        }
-
         spacer += YPOS_SPACER; //increase the value of spacer
     }
-    selectMenuItem(&menu->itemArray[0]); //mark the first item as selected
+    selectMenuItem(menu->itemArray[0]); //mark the first item as selected
 }
 
 void drawBackground()
@@ -64,38 +61,56 @@ void drawMenuItem(MenuItem item)
 }
 
 //turns the title of item to white and draws the selection cirle
-void selectMenuItem(MenuItem* item)
+void selectMenuItem(MenuItem item)
 {
-    tft.setCursor(XPOS_MIDDLE,item->yPosition);
-    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item->yPosition + SELECT_YPOS), SELECTION_RADIUS, ILI9341_WHITE);
+    tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item.yPosition + SELECT_YPOS), SELECTION_RADIUS, ILI9341_WHITE);
     tft.setTextColor(ILI9341_WHITE);
-    tft.print(item->title);
+    tft.print(item.title);
 }
-
+#define a 0x52
 //turns the title of item to darkgreen and removes the selection cirle
-void deselectMenuItem(MenuItem* item)
+void deselectMenuItem(MenuItem item)
 {
-    tft.setCursor(XPOS_MIDDLE,item->yPosition);
-    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item->yPosition + SELECT_YPOS), SELECTION_RADIUS, BACKGROUNDCOLOUR);
+    tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item.yPosition + SELECT_YPOS), SELECTION_RADIUS, BACKGROUNDCOLOUR);
     tft.setTextColor(ILI9341_DARKGREEN);
-    tft.print(item->title);
+    tft.print(item.title);
 }
 
 //check the joystick, if up or down, change what item is selected
-void switchMenuItems(Menu menu, Direction direction)
+void switchMenuItems(Menu* menu, Direction direction)
 {
     switch (direction)
     {
     case Up:
-            deselectMenuItem(&menu.itemArray[menu.itemSelected]);
-            Serial.println("up");
+        if(menu->itemSelected > 0)
+        {
+            deselectMenuItem(menu->itemArray[menu->itemSelected]);
+            menu->itemSelected--;
+            selectMenuItem(menu->itemArray[menu->itemSelected]);
+        }
         break;
     case Down:
-        Serial.println("down");
+        if(menu->itemSelected < 2)
+        {
+            deselectMenuItem(menu->itemArray[menu->itemSelected]);
+            menu->itemSelected++;
+            selectMenuItem(menu->itemArray[menu->itemSelected]);
+        }
         break;
     default:
         break;
     }
+}
+
+void checkNunchukButton()
+{
+    if (Nunchuk.state.z_button != previousZButtonState)
+  {
+
+  }
+  previousZButtonState = Nunchuk.state.z_button;
 }
 
 //functions called by menuItems VVV
