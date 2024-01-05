@@ -27,9 +27,25 @@ extern Menu gameModeMenu;
 extern Menu singlePlayerMenu;
 extern MenuHolder menuHolder;
 
+void timerSetup(void)
+{
+  TIMSK0 |= (1 << OCIE0A); // enable comp match a interrupt
+  TCCR0A |= (1 << WGM01);  // CTC-mode
+  OCR0A = 210;             // set TOP to 210
+  TCCR0B |= (1 << CS00);   // no prescaler
+}
+
+void IRSetup(void)
+{
+  EIMSK |= (1 << INT0);  // enable external INT0 interrupts
+  EICRA |= (1 << ISC01); // interrupt on falling edge
+  DDRD |= (1 << DDD6);   // set IR pin output
+}
+
 void setup(void)
 {
-  TCCR0B |= (1 << CS00);   // no prescaler
+  timerSetup();
+  IRSetup();
   sei();
   tft.begin();
   tft.setRotation(1);
@@ -39,13 +55,15 @@ int main(void)
 {
   setup();
   Serial.begin(9600);
-  Nunchuk.begin(0x52);
-  Direction curdir;
   drawMenu(&startMenu);
+  Serial.begin(9600);
   while (1)
   {
-    curdir = getNunchukDirection();
-    Serial.println(curdir);
+    if (ticksSinceLastUpdate > FPS) // 100FPS
+    {
+      Serial.println(getNunchukDirection());
+      ticksSinceLastUpdate = 0;
+    }
   }
   return 0;
 }
