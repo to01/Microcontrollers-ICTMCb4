@@ -6,19 +6,19 @@ volatile bool previousZButtonState;
   const char* singleplayerString = "Singleplayer";
   const char* multiplayerString = "Multiplayer";
   const char* startMenuString = "Mastermind!";
-  MenuItem SingleplayerItem = {singleplayerString, .ButtonAction = goToSingleplayerMenu};
-  MenuItem MultiplayerItem = {multiplayerString, .ButtonAction = goToGameMenu};
+  MenuItem SingleplayerItem = {singleplayerString, goToSingleplayerMenu};
+  MenuItem MultiplayerItem = {multiplayerString, goToGameMenu};
   Menu startMenu =  {startMenuString, false, {SingleplayerItem,MultiplayerItem}};
   
   //the menu when mulitplayer is selected
-  MenuItem raceAgainstClocKItem = {"Against the clock"};
-  MenuItem leastMovesItem = {"Least turns wins"};
+  MenuItem raceAgainstClocKItem = {"Against the clock", goToStartMenu};
+  MenuItem leastMovesItem = {"Least turns wins", goToStartMenu};
   Menu gameModeMenu = {"Gamemode", false, {raceAgainstClocKItem,leastMovesItem}};
 
   //the menu when singleplayer is selected 
-  MenuItem easyDifficultyItem = {"easy"};
-  MenuItem mediumDifficultyItem = {"medium"};
-  MenuItem hardDifficultyItem = {"hard"};
+  MenuItem easyDifficultyItem = {"easy", goToStartMenu};
+  MenuItem mediumDifficultyItem = {"medium", goToStartMenu};
+  MenuItem hardDifficultyItem = {"hard", goToStartMenu};
   Menu singlePlayerMenu = {"Difficulty", true, {easyDifficultyItem,mediumDifficultyItem,hardDifficultyItem}};
 
   //the menu holder holds the above menus and keeps track of the current menu
@@ -46,6 +46,7 @@ void drawMenu(Menu *menu)
         spacer += YPOS_SPACER; //increase the value of spacer
     }
     selectMenuItem(menu->itemArray[0]); //mark the first item as selected
+    menu->itemSelected = 0;
 }
 
 void drawBackground()

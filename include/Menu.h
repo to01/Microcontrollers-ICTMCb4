@@ -62,6 +62,7 @@ bool checkNunchukButton();
 void executeAction(MenuItem item);
 void switchMenuItems(Menu* menu, Direction direction);
 
+void goToStartMenu();
 void goToGameMenu();
 void goToSingleplayerMenu();
 
