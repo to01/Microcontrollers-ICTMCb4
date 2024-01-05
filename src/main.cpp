@@ -54,7 +54,6 @@ void setup(void)
 int main(void)
 {
   setup();
-  Serial.begin(9600);
   drawMenu(&startMenu);
   Serial.begin(9600);
   while (1)
