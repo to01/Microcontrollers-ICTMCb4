@@ -1,30 +1,30 @@
 #include "Menu.h"
 
-//the first menu on boot up
+// the first menu on boot up
 volatile bool previousZButtonState;
 
-  const char* singleplayerString = "Singleplayer";
-  const char* multiplayerString = "Multiplayer";
-  const char* startMenuString = "Mastermind!";
-  MenuItem SingleplayerItem = {singleplayerString, goToSingleplayerMenu};
-  MenuItem MultiplayerItem = {multiplayerString, goToGameMenu};
-  Menu startMenu =  {startMenuString, false, {SingleplayerItem,MultiplayerItem}};
-  
-  //the menu when mulitplayer is selected
-  MenuItem raceAgainstClocKItem = {"Against the clock", goToStartMenu};
-  MenuItem leastMovesItem = {"Least turns wins", goToStartMenu};
-  Menu gameModeMenu = {"Gamemode", false, {raceAgainstClocKItem,leastMovesItem}};
+const char *singleplayerString = "Singleplayer";
+const char *multiplayerString = "Multiplayer";
+const char *startMenuString = "Mastermind!";
+MenuItem SingleplayerItem = {singleplayerString, goToSingleplayerMenu};
+MenuItem MultiplayerItem = {multiplayerString, goToGameMenu};
+Menu startMenu = {startMenuString, false, {SingleplayerItem, MultiplayerItem}};
 
-  //the menu when singleplayer is selected 
-  MenuItem easyDifficultyItem = {"easy", goToStartMenu};
-  MenuItem mediumDifficultyItem = {"medium", goToStartMenu};
-  MenuItem hardDifficultyItem = {"hard", goToStartMenu};
-  Menu singlePlayerMenu = {"Difficulty", true, {easyDifficultyItem,mediumDifficultyItem,hardDifficultyItem}};
+// the menu when mulitplayer is selected
+MenuItem raceAgainstClocKItem = {"Against the clock", goToStartMenu};
+MenuItem leastMovesItem = {"Least turns wins", goToStartMenu};
+Menu gameModeMenu = {"Gamemode", false, {raceAgainstClocKItem, leastMovesItem}};
 
-  //the menu holder holds the above menus and keeps track of the current menu
-  MenuHolder menuHolder = {{startMenu,gameModeMenu,singlePlayerMenu},0}; //NOTE: FIND A WAY TO MAKE THE ZERO HERE UNNECESSARY (constructors?)
+// the menu when singleplayer is selected
+MenuItem easyDifficultyItem = {"easy", goToStartMenu};
+MenuItem mediumDifficultyItem = {"medium", goToStartMenu};
+MenuItem hardDifficultyItem = {"hard", goToStartMenu};
+Menu singlePlayerMenu = {"Difficulty", true, {easyDifficultyItem, mediumDifficultyItem, hardDifficultyItem}};
 
-//prints the title of a menu followed by all the menu items in their respective positions
+// the menu holder holds the above menus and keeps track of the current menu
+MenuHolder menuHolder = {{startMenu, gameModeMenu, singlePlayerMenu}, 0}; // NOTE: FIND A WAY TO MAKE THE ZERO HERE UNNECESSARY (constructors?)
+
+// prints the title of a menu followed by all the menu items in their respective positions
 void drawMenu(Menu *menu)
 {
     drawBackground();
@@ -38,14 +38,14 @@ void drawMenu(Menu *menu)
     tft.setTextSize(ITEM_FONT_SIZE);
     tft.setTextColor(ILI9341_DARKGREEN);
 
-    for (uint8_t i = 0; i < MENU_ARRAY_SIZE; i++) //draw each item
+    for (uint8_t i = 0; i < MENU_ARRAY_SIZE; i++) // draw each item
     {
-        menu->itemArray[i].yPosition = (YPOS_START + spacer); //store the YPosition of an item to its currect YPosition on the screen;
-        drawMenuItem(menu->itemArray[i]); 
+        menu->itemArray[i].yPosition = (YPOS_START + spacer); // store the YPosition of an item to its currect YPosition on the screen;
+        drawMenuItem(menu->itemArray[i]);
 
-        spacer += YPOS_SPACER; //increase the value of spacer
+        spacer += YPOS_SPACER; // increase the value of spacer
     }
-    selectMenuItem(menu->itemArray[0]); //mark the first item as selected
+    selectMenuItem(menu->itemArray[0]); // mark the first item as selected
     menu->itemSelected = 0;
 }
 
@@ -54,56 +54,56 @@ void drawBackground()
     tft.fillScreen(BACKGROUNDCOLOUR);
 }
 
-//draws the title of an item
+// draws the title of an item
 void drawMenuItem(MenuItem item)
 {
-    tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.setCursor(XPOS_MIDDLE, item.yPosition);
     tft.print(item.title);
 }
 
-//turns the title of item to white and draws the selection cirle
+// turns the title of item to white and draws the selection cirle
 void selectMenuItem(MenuItem item)
 {
-    tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.setCursor(XPOS_MIDDLE, item.yPosition);
     tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item.yPosition + SELECT_YPOS), SELECTION_RADIUS, ILI9341_WHITE);
     tft.setTextColor(ILI9341_WHITE);
     tft.print(item.title);
 }
 
-//turns the title of item to darkgreen and removes the selection cirle
+// turns the title of item to darkgreen and removes the selection cirle
 void deselectMenuItem(MenuItem item)
 {
-    tft.setCursor(XPOS_MIDDLE,item.yPosition);
+    tft.setCursor(XPOS_MIDDLE, item.yPosition);
     tft.fillCircle((XPOS_MIDDLE - SELECT_XPOS), (item.yPosition + SELECT_YPOS), SELECTION_RADIUS, BACKGROUNDCOLOUR);
     tft.setTextColor(ILI9341_DARKGREEN);
     tft.print(item.title);
 }
 
-//check the joystick, if up or down, change what item is selected
-void switchMenuItems(Menu* menu, Direction direction)
+// check the joystick, if up or down, change what item is selected
+void switchMenuItems(Menu *menu, Direction direction)
 {
     switch (direction)
     {
     case Up:
-        if(menu->itemSelected > 0)
+        if (menu->itemSelected > 0)
         {
             deselectMenuItem(menu->itemArray[menu->itemSelected]);
             menu->itemSelected--;
             selectMenuItem(menu->itemArray[menu->itemSelected]);
-        } 
+        }
         break;
     case Down:
-        if(menu->itemSelected < 2 && menu->thirdOption)
+        if (menu->itemSelected < 2 && menu->thirdOption)
         {
             deselectMenuItem(menu->itemArray[menu->itemSelected]);
             menu->itemSelected++;
             selectMenuItem(menu->itemArray[menu->itemSelected]);
-
-        } else if(menu->itemSelected < 1)
+        }
+        else if (menu->itemSelected < 1)
         {
             deselectMenuItem(menu->itemArray[menu->itemSelected]);
             menu->itemSelected++;
-            selectMenuItem(menu->itemArray[menu->itemSelected]);   
+            selectMenuItem(menu->itemArray[menu->itemSelected]);
         }
         break;
     default:
@@ -113,29 +113,30 @@ void switchMenuItems(Menu* menu, Direction direction)
 
 bool checkNunchukButton()
 {
-if (Nunchuk.state.z_button != previousZButtonState && Nunchuk.state.z_button == 0) 
-  {
-    return true;
-  } else 
-  return false;
-  previousZButtonState = Nunchuk.state.z_button;
+    if (Nunchuk.state.z_button != previousZButtonState && Nunchuk.state.z_button == 0)
+    {
+        return true;
+    }
+    else
+        return false;
+    previousZButtonState = Nunchuk.state.z_button;
 }
 
-//functions called by menuItems VVV
+// functions called by menuItems VVV
 void goToStartMenu()
 {
-    menuHolder.selectedMenu = 0; //NOTE: DE-MAGIC THIS!
+    menuHolder.selectedMenu = 0; // NOTE: DE-MAGIC THIS!
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 void goToGameMenu()
 {
-    menuHolder.selectedMenu = 1; //NOTE: DE-MAGIC THIS!
+    menuHolder.selectedMenu = 1; // NOTE: DE-MAGIC THIS!
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 void goToSingleplayerMenu()
 {
-    menuHolder.selectedMenu = 2; //NOTE: DE-MAGIC THIS!
+    menuHolder.selectedMenu = 2; // NOTE: DE-MAGIC THIS!
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }

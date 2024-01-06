@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define TOGGLENUMBER 38 // number of times the IR emitter toggles to send one bit
+#define TOGGLENUMBER 38           // number of times the IR emitter toggles to send one bit
 #define INITIALONEDURATION 684    // 9ms
 #define INITIALZERODURATION 342   // 4.5ms
 #define DATALENGTH 32             // total amount of bits sent, including logical inverse

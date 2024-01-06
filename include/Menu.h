@@ -12,40 +12,39 @@
 #define YPOS_SPACER 30  // the space between menu items
 #define YPOS_START 70   // the height at which the first menu item is drawn
 
-//font sizes
+// font sizes
 #define TITLE_FONT_SIZE 3
 #define ITEM_FONT_SIZE 2
 
-#define MENU_ARRAY_SIZE 3  // a menu always has a max of 3 items
-#define MENUHOLDER_ARRAY_SIZE 3  // a menu always has a max of 3 items
+#define MENU_ARRAY_SIZE 3       // a menu always has a max of 3 items
+#define MENUHOLDER_ARRAY_SIZE 3 // a menu always has a max of 3 items
 
-//positions
+// positions
 #define SELECT_XPOS 20     // distance from the text to where the selection circle is drawn
 #define SELECT_YPOS 10     // distance to center the circle with the text
 #define SELECTION_RADIUS 3 // radius of selection circle
 
-
 extern Adafruit_ILI9341 tft;
 
-//create a typedef that points to void functions
+// create a typedef that points to void functions
 typedef void (*ActionPointer)();
 
 struct MenuItem
 {
-    const char* title;;
+    const char *title;
     ActionPointer ButtonAction;
-    uint8_t yPosition;    
+    uint8_t yPosition;
 };
 
 struct Menu
 {
-    const char* title;
+    const char *title;
     bool thirdOption;                    // does this menu have a third option?
     MenuItem itemArray[MENU_ARRAY_SIZE]; // insert MenuItems here
     uint8_t itemSelected;
 };
 
-struct MenuHolder   
+struct MenuHolder
 {
     Menu MenuArray[MENUHOLDER_ARRAY_SIZE];
     uint8_t selectedMenu;
@@ -60,7 +59,7 @@ void deselectMenuItem(MenuItem item);
 
 bool checkNunchukButton();
 void executeAction(MenuItem item);
-void switchMenuItems(Menu* menu, Direction direction);
+void switchMenuItems(Menu *menu, Direction direction);
 
 void goToStartMenu();
 void goToGameMenu();
