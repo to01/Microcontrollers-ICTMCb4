@@ -16,8 +16,8 @@
 #define TITLE_FONT_SIZE 3
 #define ITEM_FONT_SIZE 2
 
-#define MENU_ARRAY_SIZE 3       // a menu always has a max of 3 items
-#define MENUHOLDER_ARRAY_SIZE 3 // a menu always has a max of 3 items
+#define MENU_ARRAY_SIZE 3       // a menu has a max of 3 items
+#define MENUHOLDER_ARRAY_SIZE 3 // a menu holder has a max of 3 menus
 
 // positions
 #define SELECT_XPOS 20     // distance from the text to where the selection circle is drawn
@@ -31,8 +31,8 @@ typedef void (*ActionPointer)();
 
 struct MenuItem
 {
-    const char *title;
-    ActionPointer ButtonAction;
+    const char *title;          
+    ActionPointer ButtonAction; //pointer to a void function
     uint8_t yPosition;
 };
 
@@ -41,13 +41,13 @@ struct Menu
     const char *title;
     bool thirdOption;                    // does this menu have a third option?
     MenuItem itemArray[MENU_ARRAY_SIZE]; // insert MenuItems here
-    uint8_t itemSelected;
+    uint8_t itemSelected;                //index of the selected item
 };
 
 struct MenuHolder
 {
-    Menu MenuArray[MENUHOLDER_ARRAY_SIZE];
-    uint8_t selectedMenu;
+    Menu MenuArray[MENUHOLDER_ARRAY_SIZE]; //insert menus here
+    uint8_t selectedMenu;               //index of the current menu
 };
 
 void drawMenu(Menu *menu);
