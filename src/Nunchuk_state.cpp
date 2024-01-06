@@ -51,3 +51,15 @@ Direction getNunchukDirection()
     }
     return None;
 }
+
+Direction getFilteredDirection()
+{
+    static Direction previousDirection = None;
+    Direction currentDirection = getNunchukDirection();
+    if (currentDirection != previousDirection)
+    {
+        previousDirection = currentDirection;
+        return currentDirection;
+    }
+    return None;
+}

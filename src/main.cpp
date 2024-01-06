@@ -56,7 +56,6 @@ int main(void)
   setup();
 
   drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
-  Serial.begin(9600);
 
   // menuHolder.MenuArray[menuHolder.selectedMenu].itemArray[1].ButtonAction();
 
@@ -70,7 +69,7 @@ int main(void)
     prevstat = Nunchuk.state.z_button;
     if (ticksSinceLastUpdate > FPS * 10) // 100FPS
     {
-      switchMenuItems(&menuHolder.MenuArray[menuHolder.selectedMenu], getNunchukDirection());
+      switchMenuItems(&menuHolder.MenuArray[menuHolder.selectedMenu], getFilteredDirection());
     }
   }
   return 0;
