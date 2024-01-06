@@ -59,14 +59,21 @@ int main(void)
 
   // menuHolder.MenuArray[menuHolder.selectedMenu].itemArray[1].ButtonAction();
 
-  bool prevstat = Nunchuk.state.z_button;
+  bool previousZ = Nunchuk.state.z_button;
+  bool previousC = Nunchuk.state.c_button;
   while (1)
   {
-    if (Nunchuk.state.z_button && Nunchuk.state.z_button != prevstat)
+    if (Nunchuk.state.z_button && Nunchuk.state.z_button != previousZ)
     {
       menuHolder.MenuArray[menuHolder.selectedMenu].itemArray[menuHolder.MenuArray[menuHolder.selectedMenu].itemSelected].ButtonAction();
+      // take currently selected menu, take the currently selected item of that menu and run that item's buttonaction
     }
-    prevstat = Nunchuk.state.z_button;
+    if (Nunchuk.state.c_button && Nunchuk.state.c_button != previousC)
+    {
+      goToStartMenu();
+    }
+    previousC = Nunchuk.state.c_button;
+    previousZ = Nunchuk.state.z_button;
     if (ticksSinceLastUpdate > FPS * 10) // 100FPS
     {
       switchMenuItems(&menuHolder.MenuArray[menuHolder.selectedMenu], getFilteredDirection());
