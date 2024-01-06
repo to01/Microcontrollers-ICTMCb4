@@ -49,34 +49,17 @@ void setup(void)
   sei();
   tft.begin();
   tft.setRotation(1);
+  drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 int main(void)
 {
   setup();
-
-  drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
-
-  // menuHolder.MenuArray[menuHolder.selectedMenu].itemArray[1].ButtonAction();
-
-  bool previousZ = Nunchuk.state.z_button;
-  bool previousC = Nunchuk.state.c_button;
   while (1)
   {
-    if (Nunchuk.state.z_button && Nunchuk.state.z_button != previousZ)
+    if (ticksSinceLastUpdate > FPS) // 100FPS
     {
-      menuHolder.MenuArray[menuHolder.selectedMenu].itemArray[menuHolder.MenuArray[menuHolder.selectedMenu].itemSelected].ButtonAction();
-      // take currently selected menu, take the currently selected item of that menu and run that item's buttonaction
-    }
-    if (Nunchuk.state.c_button && Nunchuk.state.c_button != previousC)
-    {
-      goToStartMenu();
-    }
-    previousC = Nunchuk.state.c_button;
-    previousZ = Nunchuk.state.z_button;
-    if (ticksSinceLastUpdate > FPS * 10) // 100FPS
-    {
-      switchMenuItems(&menuHolder.MenuArray[menuHolder.selectedMenu], getFilteredDirection());
+      mainMenu();
     }
   }
   return 0;

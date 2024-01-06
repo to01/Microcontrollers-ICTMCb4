@@ -65,4 +65,7 @@ void goToStartMenu();
 void goToGameMenu();
 void goToSingleplayerMenu();
 
+// function called in loop to render menu and handle all logic relating to it
+void mainMenu();
+
 #endif

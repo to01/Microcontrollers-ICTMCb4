@@ -140,3 +140,21 @@ void goToSingleplayerMenu()
     menuHolder.selectedMenu = 2; // NOTE: DE-MAGIC THIS!
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
+
+void mainMenu()
+{
+    static bool previousZ = Nunchuk.state.z_button;
+    static bool previousC = Nunchuk.state.c_button;
+    if (Nunchuk.state.z_button && Nunchuk.state.z_button != previousZ)
+    {
+        menuHolder.MenuArray[menuHolder.selectedMenu].itemArray[menuHolder.MenuArray[menuHolder.selectedMenu].itemSelected].ButtonAction();
+        // take currently selected menu, take the currently selected item of that menu and run that item's buttonaction
+    }
+    if (Nunchuk.state.c_button && Nunchuk.state.c_button != previousC)
+    {
+        goToStartMenu();
+    }
+    previousC = Nunchuk.state.c_button;
+    previousZ = Nunchuk.state.z_button;
+    switchMenuItems(&menuHolder.MenuArray[menuHolder.selectedMenu], getFilteredDirection());
+}
