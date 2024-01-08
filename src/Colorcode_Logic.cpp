@@ -1,5 +1,9 @@
 #include "Colorcode_Logic.h"
 
+uint8_t guessFromOpponentArray[4] = {0, 0, 0, 0}; // array to set every pin to the correct color
+
+uint16_t guessFromOpponent = 0; // variable to store the guess received from the opponent
+
 // function to get the binary code for the infraredprotocol of the color code
 // use this function after the player has selected the colors and pressed the send-button
 uint16_t getColorCodeBinary()
@@ -40,6 +44,7 @@ void storePreviousGuess()
 }
 
 // function to set the guess received from the opponent to an array
+// guessFromOponent is the received infrared code
 void setGuessFromOpponentToArray()
 {
     guessFromOpponentArray[0] = guessFromOpponent >> 12 & 0b1111;

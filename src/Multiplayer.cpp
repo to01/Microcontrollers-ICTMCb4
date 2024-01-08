@@ -2,7 +2,9 @@
 
 Queue previousGuessQueue = Queue(); // queue for the previous guesses
 
-uint16_t colorCodeReceivedFromOpponent = recievedBits; // variable to store the color code received from the opponent
+Queue previousGuessOpponentQueue = Queue(); // queue for the previous guesses from the opponent
+
+uint16_t colorCodeReceivedFromOpponent; // variable to store the color code received from the opponent
 
 uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
 
@@ -118,6 +120,20 @@ void drawCodeMultiplayer()
         tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * i, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[i].currentGameColors].ILI9341Color);
     }
     blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
+}
+
+// function to draw the geuss from the opponent
+void drawGuessOpponent()
+{
+    for (uint8_t i = 0; i < previousGuessOpponentQueue.rear + 1; i++)
+    // for (uint8_t i = 0; i < 1; i++)
+    {
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            // tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXGUESS - STEPVALUE * j, STARTVALUEY + STEPVALUE * i, RADIUSPREVIOUSGEUSS, ILI9341_RED);
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXGUESS - STEPVALUE * j, STARTVALUEY + STEPVALUE * i, RADIUSPREVIOUSGEUSS, gameColorsArray[guessFromOpponentArray[j]].ILI9341Color);
+        }
+    }
 }
 
 // function to draw the previous guesses
@@ -284,6 +300,18 @@ void giveFeedbackGuessOpponent()
 // used for all multiplayerLoop logic
 void multiplayerLoop(const uint16_t ticksPerFrame)
 {
+    static uint16_t previousRecievedBits = recievedBits;
+    if (recievedBits != previousRecievedBits)
+    {
+        Serial.begin(9600);
+        Serial.println(recievedBits);
+        Serial.end();
+        previousRecievedBits = recievedBits;
+        guessFromOpponent = recievedBits;
+        setGuessFromOpponentToArray();
+        storePreviousGuessOpponent();
+        drawGuessOpponent();
+    }
     if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
     {
         selectPinMultiplayer();
@@ -317,6 +345,7 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
     if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
     {
         drawCodeMultiplayer();
+        // drawGuessOpponent();
 
         changeColorCodeOpponentCount = 0;
     }

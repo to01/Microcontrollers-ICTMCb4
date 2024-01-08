@@ -40,4 +40,6 @@ void giveFeedbackGuessOpponent(void); // function to draw the feedback from the 
 
 void multiplayerLoop(const uint16_t ticksPerFrame); // function called repeatedly by main loop
 
+void drawGuessOpponent(void); // function to draw the guess of the opponent
+
 #endif // _MULTIPLAYER_
