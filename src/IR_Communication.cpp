@@ -114,6 +114,8 @@ void resetRecieveIR(void) // resets all values needed in recieveIR to their star
   readCount = 0;
 }
 
+bool newRecievedBits = false;
+
 /*
   Function used by TIMER0 to recieve IR
 */
@@ -192,9 +194,20 @@ void recieveIR(void)
     break;
   case inverseBits: // currently only used for resetting and setting recievedBits, might be used to check inverse later
     recievedBits = currentBits;
+    newRecievedBits = true;
     resetRecieveIR();
     break;
   }
+}
+
+bool getNewRecievedBits(void)
+{
+  return newRecievedBits;
+}
+
+void bitsRead(void)
+{
+  newRecievedBits = false;
 }
 
 ISR(TIMER0_COMPA_vect)

@@ -62,6 +62,10 @@ void resetRecieveIR(void); // resets all values needed in recieveIR to their sta
 */
 void recieveIR(void);
 
+bool getNewRecievedBits(void);
+
+void bitsRead(void);
+
 bool sendBits(uint16_t bitsToSend);
 
 uint16_t getTicksSinceLastUpdate(void);

@@ -300,13 +300,12 @@ void giveFeedbackGuessOpponent()
 // used for all multiplayerLoop logic
 void multiplayerLoop(const uint16_t ticksPerFrame)
 {
-    static uint16_t previousRecievedBits = recievedBits;
-    if (recievedBits != previousRecievedBits)
+    if (getNewRecievedBits())
     {
+        bitsRead();
         Serial.begin(9600);
         Serial.println(recievedBits);
         Serial.end();
-        previousRecievedBits = recievedBits;
         guessFromOpponent = recievedBits;
         setGuessFromOpponentToArray();
         storePreviousGuessOpponent();
