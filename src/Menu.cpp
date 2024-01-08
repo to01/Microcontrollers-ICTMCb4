@@ -129,6 +129,7 @@ void goToSingleplayerMenu()
 void goToRaceAgainstTheClock()
 {
     drawBackground();
+    drawCodeOpponent();
     setGameState(GAMECODEOPPONENT);
 }
 

@@ -122,8 +122,10 @@ void codeOpponentLoop(const uint16_t ticksPerFrame)
         for (uint8_t i = 0; i < 4; i++)
         {
             colorCodeArray[i].currentGameColors = 0;
+            colorCodeArray[i].gameColors = gameColorsArray[0];
         }
         setGameState(GAMEMULTIPLAYER);
+        drawPlayingField();
     }
     previousZ = Nunchuk.state.z_button;
 
@@ -134,6 +136,7 @@ void codeOpponentLoop(const uint16_t ticksPerFrame)
         for (uint8_t i = 0; i < 4; i++)
         {
             colorCodeArray[i].currentGameColors = 0;
+            colorCodeArray[i].gameColors = gameColorsArray[0];
         }
         currentPin = 0;
     }

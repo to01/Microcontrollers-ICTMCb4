@@ -9,6 +9,7 @@ uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
 // function to draw the playing field and initialize the color code
 void drawPlayingField()
 {
+    tft.setRotation(0);
     tft.fillScreen(BACKGROUNDCOLORGAME);
     tft.fillRect(0, ILI9341_TFTHEIGHT / 2 - 1, ILI9341_TFTWIDTH - 20, 3, ILI9341_WHITE);
     tft.drawRect(ILI9341_TFTWIDTH - 20, ILI9341_TFTHEIGHT / 2 - 25, 21, 53, ILI9341_WHITE);

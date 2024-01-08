@@ -4,6 +4,7 @@
 #include "IR_Communication.h"
 #include "Make_Code_Mechanics.h"
 #include "GameState.h"
+#include "Multiplayer.h"
 
 #define TFT_DC 9
 #define TFT_CS 10
