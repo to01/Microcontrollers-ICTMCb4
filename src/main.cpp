@@ -1,25 +1,30 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <Wire.h>
+#include "End_Game.h"
 #include "Adafruit_ILI9341.h"
 #include "Nunchuk.h"
 #include "Nunchuk_state.h"
 #include "IR_Communication.h"
 #include "Menu.h"
 
-#define TFT_DC 9
-#define TFT_CS 10
 #define BAUDRATE 9600
+#define CHUNKSIZE 32
+#define BUFFERLEN 256
 #define NUNCHUK_ADDRESS 0x52
-#define RADIUS_CODEOPPONENT 25
-#define RADIUS_CODEOPPONENTGLOW 27
 
-#define FPS 380
-#define SELECTEDPINCOUNT 25
-#define SELECTPINSPEED 50
-#define CHANGECOLORCODEOPPONENTCOUNT 3
-#define BACKGROUNDCOLORGAME 0x0500
+#define CLOCKRATE 38000000
 
+const uint16_t ticksPerFrame = (CLOCKRATE / 100000); // 100 FPS = 380 tpf
+
+enum GameState
+{
+  MENUPLAYERS,
+  MENUGAMEMODE,
+  GAMECODEOPPONENT,
+  GAMEMULTIPLAYER,
+  ENDGAME
+};
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 extern Menu startMenu;
@@ -58,7 +63,7 @@ int main(void)
   Nunchuk.begin(0x52);
   while (1)
   {
-    if (ticksSinceLastUpdate > FPS) // 100FPS
+    if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
     {
       mainMenu();
     }
