@@ -1,4 +1,5 @@
 #include "Menu.h"
+#include "Make_Code_Opponent.h"
 
 //start menu is the first menu on boot up, it holds the option between singleplayer or multiplayer
 MenuItem SingleplayerItem = {"Singleplayer", goToSingleplayerMenu};
@@ -6,7 +7,7 @@ MenuItem MultiplayerItem = {"Multiplayer", goToGameMenu};
 Menu startMenu = {"Mastermind!", false, {SingleplayerItem, MultiplayerItem}};
 
 // the menu when mulitplayer is selected, this menu holds the option between gamemodes
-MenuItem raceAgainstClocKItem = {"Against the clock", goToStartMenu};
+MenuItem raceAgainstClocKItem = {"Against the clock", drawCodeOpponent};
 MenuItem leastMovesItem = {"Least turns wins", goToStartMenu};
 Menu gameModeMenu = {"Gamemode", false, {raceAgainstClocKItem, leastMovesItem}};
 
