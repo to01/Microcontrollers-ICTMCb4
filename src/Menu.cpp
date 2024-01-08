@@ -1,8 +1,5 @@
 #include "Menu.h"
 
-
-volatile bool previousZButtonState; //unnecessary?
-
 //start menu is the first menu on boot up, it holds the option between singleplayer or multiplayer
 MenuItem SingleplayerItem = {"Singleplayer", goToSingleplayerMenu};
 MenuItem MultiplayerItem = {"Multiplayer", goToGameMenu};
@@ -127,17 +124,6 @@ void goToSingleplayerMenu()
 {
     menuHolder.selectedMenu = 2; // NOTE: DE-MAGIC THIS!
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
-}
-
-bool checkNunchukButton() //unnecessary?
-{
-    if (Nunchuk.state.z_button != previousZButtonState && Nunchuk.state.z_button == 0)
-    {
-        return true;
-    }
-    else
-        return false;
-    previousZButtonState = Nunchuk.state.z_button;
 }
 
 void mainMenu()

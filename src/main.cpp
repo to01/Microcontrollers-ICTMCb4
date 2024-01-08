@@ -55,6 +55,7 @@ void setup(void)
 int main(void)
 {
   setup();
+  Nunchuk.begin(0x52);
   while (1)
   {
     if (ticksSinceLastUpdate > FPS) // 100FPS
