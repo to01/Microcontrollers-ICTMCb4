@@ -3,6 +3,7 @@
 
 #include "IR_Communication.h"
 #include "Make_Code_Mechanics.h"
+#include "GameState.h"
 
 #define TFT_DC 9
 #define TFT_CS 10
@@ -19,5 +20,7 @@ void selectPinCodeOpponent(void); // function to select the pin
 void drawCodeOpponent(void); // function to draw the pins
 
 void codeOpponentLoop(const uint16_t ticksPerFrame); // function repeatedly called by main loop
+
+void sendCodeToOpponent(void); // function to send the code to the opponent
 
 #endif // _CHOOSE_CODE_OPPONENT_

@@ -3,6 +3,7 @@
 
 #include "Adafruit_ILI9341.h"
 #include "Nunchuk.h"
+#include "Nunchuk_state.h"
 
 #define BACKGROUNDCOLORGAME 0x0500 // background color of the game
 

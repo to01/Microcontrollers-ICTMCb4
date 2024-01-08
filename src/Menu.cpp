@@ -1,13 +1,13 @@
 #include "Menu.h"
 #include "Make_Code_Opponent.h"
 
-//start menu is the first menu on boot up, it holds the option between singleplayer or multiplayer
+// start menu is the first menu on boot up, it holds the option between singleplayer or multiplayer
 MenuItem SingleplayerItem = {"Singleplayer", goToSingleplayerMenu};
 MenuItem MultiplayerItem = {"Multiplayer", goToGameMenu};
 Menu startMenu = {"Mastermind!", false, {SingleplayerItem, MultiplayerItem}};
 
 // the menu when mulitplayer is selected, this menu holds the option between gamemodes
-MenuItem raceAgainstClocKItem = {"Against the clock", drawCodeOpponent};
+MenuItem raceAgainstClocKItem = {"Against the clock", goToRaceAgainstTheClock};
 MenuItem leastMovesItem = {"Least turns wins", goToStartMenu};
 Menu gameModeMenu = {"Gamemode", false, {raceAgainstClocKItem, leastMovesItem}};
 
@@ -42,10 +42,10 @@ void drawMenu(Menu *menu)
         spacer += YPOS_SPACER; // increase the value of spacer
     }
     selectMenuItem(menu->itemArray[0]); // mark the first item as selected
-    menu->itemSelected = 0;             //select the item at the top of the menu
+    menu->itemSelected = 0;             // select the item at the top of the menu
 }
 
-void drawBackground()  //this can be safely removed
+void drawBackground() // this can be safely removed
 {
     tft.fillScreen(BACKGROUNDCOLOUR);
 }
@@ -78,7 +78,7 @@ void deselectMenuItem(MenuItem item)
 // check the joystick, if up or down, change what item is selected
 void switchMenuItems(Menu *menu, Direction direction)
 {
-    switch (direction) 
+    switch (direction)
     {
     case Up:
         if (menu->itemSelected > 0)
@@ -107,7 +107,6 @@ void switchMenuItems(Menu *menu, Direction direction)
     }
 }
 
-
 // functions called by menuItems VVV
 void goToStartMenu()
 {
@@ -129,11 +128,13 @@ void goToSingleplayerMenu()
 
 void goToRaceAgainstTheClock()
 {
+    drawBackground();
     setGameState(GAMECODEOPPONENT);
 }
 
 void mainMenu()
 {
+    tft.setRotation(1);
     // get the current state of the nunchuk buttons
     static bool previousZ = Nunchuk.state.z_button;
     static bool previousC = Nunchuk.state.c_button;

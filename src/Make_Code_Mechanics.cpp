@@ -28,8 +28,7 @@ ColorCode colorCodeArray[4] = {
 // function to change the color of the current pin
 void changeColorPin(uint8_t currentPin)
 {
-    Nunchuk.getState(NUNCHUK_ADDRESS);
-    if (Nunchuk.state.joy_y_axis > 200)
+    if (getNunchukDirection() == Up)
     {
         if (colorCodeArray[currentPin].currentGameColors > 0)
         {
@@ -41,7 +40,7 @@ void changeColorPin(uint8_t currentPin)
         }
     }
 
-    if (Nunchuk.state.joy_y_axis < 50)
+    if (getNunchukDirection() == Down)
     {
         if (colorCodeArray[currentPin].currentGameColors < 7)
         {

@@ -19,7 +19,6 @@ const uint16_t ticksPerFrame = (CLOCKRATE / 100000); // 100 FPS = 380 tpf
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
-
 extern Menu startMenu;
 extern Menu gameModeMenu;
 extern Menu singlePlayerMenu;
@@ -48,6 +47,7 @@ void setup(void)
   tft.begin();
   tft.setRotation(1);
   drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
+  // tft.fillScreen(BACKGROUNDCOLORGAME);
 }
 
 int main(void)
@@ -58,13 +58,22 @@ int main(void)
   {
     if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
     {
-      if(getGameState() == MENU)
+      switch (getGameState())
       {
+      case MENU:
         mainMenu();
-      }
-      else
-      {
+        break;
+      case GAMECODEOPPONENT:
         codeOpponentLoop(ticksPerFrame);
+        break;
+      case GAMEMULTIPLAYER:
+        multiplayerLoop(ticksPerFrame);
+        break;
+      case ENDGAME:
+        // endGameLoop(ticksPerFrame);
+        break;
+      default:
+        break;
       }
     }
   }

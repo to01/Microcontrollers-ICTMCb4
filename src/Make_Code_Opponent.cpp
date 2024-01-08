@@ -30,11 +30,11 @@ void changeColorCodeOpponent()
 // function to change the selected pin
 void selectPinCodeOpponent()
 {
+    tft.setRotation(0);
     selectPinSpeed++;
     if (selectPinSpeed > SELECTPINSPEED)
     {
-        Nunchuk.getState(NUNCHUK_ADDRESS);  // get the state of the nunchuk
-        if (Nunchuk.state.joy_x_axis > 200) // if the joystick is moved to the right
+        if (getNunchukDirection() == Right) // if the joystick is moved to the right
         {
             if (currentPin < 3) // if the current pin is not the last pin
             {
@@ -47,7 +47,7 @@ void selectPinCodeOpponent()
             }
         }
 
-        if (Nunchuk.state.joy_x_axis < 50) // if the joystick is moved to the left
+        if (getNunchukDirection() == Left) // if the joystick is moved to the left
         {
             if (currentPin > 0) // if the current pin is not the first pin
             {
@@ -75,7 +75,7 @@ void drawCodeOpponent()
     tft.setCursor(90, 55);
     tft.print("your Opponent");
     tft.setRotation(0);
-    
+
     for (uint8_t cg = 0; cg < 4; cg++)
     {
         tft.fillCircle(HEIGHT_CODEOPPONENT, (15 + RADIUS_CODEOPPONENT * 2) * (cg + 1), RADIUS_CODEOPPONENT, gameColorsArray[colorCodeArray[cg].currentGameColors].ILI9341Color);
@@ -98,19 +98,50 @@ void codeOpponentLoop(const uint16_t ticksPerFrame)
 {
     if (ticksSinceLastUpdate > ticksPerFrame)
     {
-      selectPinCodeOpponent();
-      ticksSinceLastUpdate = 0;
+        selectPinCodeOpponent();
+        ticksSinceLastUpdate = 0;
     }
 
     if (selectPinCount > SELECTEDPINCOUNT)
     {
-      changeColorCodeOpponent();
-      selectPinCount = 0;
+        changeColorCodeOpponent();
+        selectPinCount = 0;
     }
 
     if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
     {
-      drawCodeOpponent();
-      changeColorCodeOpponentCount = 0;
+        drawCodeOpponent();
+        changeColorCodeOpponentCount = 0;
     }
+
+    // get the current state of the nunchuk buttons
+    static bool previousZ = Nunchuk.state.z_button;
+    if (Nunchuk.state.z_button && Nunchuk.state.z_button != previousZ) // if the Z-button went from released to pressed
+    {
+        sendCodeToOpponent();
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            colorCodeArray[i].currentGameColors = 0;
+        }
+        setGameState(GAMEMULTIPLAYER);
+    }
+    previousZ = Nunchuk.state.z_button;
+
+    static bool previousC = Nunchuk.state.c_button;
+    if (Nunchuk.state.c_button && Nunchuk.state.c_button != previousC) // if the C-button went from released to pressed
+    {
+        setGameState(MENU);
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            colorCodeArray[i].currentGameColors = 0;
+        }
+        currentPin = 0;
+    }
+    previousC = Nunchuk.state.c_button;
+}
+
+// function to send the code to the opponent
+void sendCodeToOpponent()
+{
+    sendBits(getColorCodeBinary());
 }
