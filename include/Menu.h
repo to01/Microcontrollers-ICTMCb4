@@ -3,6 +3,7 @@
 
 #include "Adafruit_ILI9341.h"
 #include "Nunchuk_state.h"
+#include "GameState.h"
 
 #define BACKGROUNDCOLOUR 0x0500 // 5-6-5 color code for dark green
 
@@ -64,6 +65,7 @@ void switchMenuItems(Menu *menu, Direction direction);
 void goToStartMenu();
 void goToGameMenu();
 void goToSingleplayerMenu();
+void goToRaceAgainstTheClock();
 
 // function called in loop to render menu and handle all logic relating to it
 void mainMenu();

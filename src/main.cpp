@@ -17,15 +17,8 @@
 
 const uint16_t ticksPerFrame = (CLOCKRATE / 100000); // 100 FPS = 380 tpf
 
-enum GameState
-{
-  MENUPLAYERS,
-  MENUGAMEMODE,
-  GAMECODEOPPONENT,
-  GAMEMULTIPLAYER,
-  ENDGAME
-};
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
+
 
 extern Menu startMenu;
 extern Menu gameModeMenu;
@@ -65,7 +58,14 @@ int main(void)
   {
     if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
     {
-      mainMenu();
+      if(getGameState() == MENU)
+      {
+        mainMenu();
+      }
+      else
+      {
+        codeOpponentLoop(ticksPerFrame);
+      }
     }
   }
   return 0;

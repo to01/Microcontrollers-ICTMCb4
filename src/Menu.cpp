@@ -127,6 +127,11 @@ void goToSingleplayerMenu()
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
+void goToRaceAgainstTheClock()
+{
+    setGameState(GAMECODEOPPONENT);
+}
+
 void mainMenu()
 {
     // get the current state of the nunchuk buttons
