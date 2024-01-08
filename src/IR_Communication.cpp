@@ -103,7 +103,7 @@ bool getRecieverStatus(void)
   return !((PIND >> PIND2) % 2);
 }
 
-uint16_t readCount = 0; // number of times certain things have been read, used in different ways in recieveIR()
+uint16_t readCount = 0;                          // number of times certain things have been read, used in different ways in recieveIR()
 recieveStatus currentRecieveStatus = initialOne; // used to decern the current status of recieveIR()
 uint16_t recievedBits = 0;
 
@@ -120,7 +120,7 @@ void resetRecieveIR(void) // resets all values needed in recieveIR to their star
 void recieveIR(void)
 {
   static bool previousValue;
-  static uint8_t bitCount; // used to track the number of bits read so far 
+  static uint8_t bitCount;     // used to track the number of bits read so far
   static uint16_t currentBits; // temporary variable to keep track of bits
 
   switch (currentRecieveStatus)
@@ -150,7 +150,7 @@ void recieveIR(void)
       }
     }
     break;
-  case initialZero: // checks for 4.5ms 0 
+  case initialZero: // checks for 4.5ms 0
     if (!(readCount < INITIALZERODURATION - ALLOWEDINITIALVARIANCE))
     {
       if (readCount > INITIALZERODURATION || getRecieverStatus())
@@ -231,10 +231,10 @@ bool sendBits(uint16_t bitsToSend)
 
 uint16_t getTicksSinceLastUpdate(void)
 {
-    return ticksSinceLastUpdate;
+  return ticksSinceLastUpdate;
 }
 
 void setTicksSinceLastUpdate(uint16_t newTicksSinceLastUpdate)
 {
-    ticksSinceLastUpdate = newTicksSinceLastUpdate;
+  ticksSinceLastUpdate = newTicksSinceLastUpdate;
 }

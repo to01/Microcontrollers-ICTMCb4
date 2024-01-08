@@ -2,10 +2,16 @@
 #include <avr/interrupt.h>
 #include <Wire.h>
 #include "End_Game.h"
+#include "Adafruit_ILI9341.h"
+#include "Nunchuk.h"
+#include "Nunchuk_state.h"
+#include "IR_Communication.h"
+#include "Menu.h"
 
 #define BAUDRATE 9600
 #define CHUNKSIZE 32
 #define BUFFERLEN 256
+#define NUNCHUK_ADDRESS 0x52
 
 #define CLOCKRATE 38000000
 
@@ -19,6 +25,12 @@ enum GameState
   GAMEMULTIPLAYER,
   ENDGAME
 };
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
+
+extern Menu startMenu;
+extern Menu gameModeMenu;
+extern Menu singlePlayerMenu;
+extern MenuHolder menuHolder;
 
 void timerSetup(void)
 {
@@ -41,19 +53,20 @@ void setup(void)
   IRSetup();
   sei();
   tft.begin();
-  tft.fillScreen(BACKGROUNDCOLORGAME);
+  tft.setRotation(1);
+  drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 int main(void)
 {
   setup();
-
-  // drawPlayingField();
-   drawCodeOpponent();
+  Nunchuk.begin(0x52);
   while (1)
   {
-    // multiplayerLoop(ticksPerFrame);
-     codeOpponentLoop(ticksPerFrame);
+    if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
+    {
+      mainMenu();
+    }
   }
   return 0;
 }
