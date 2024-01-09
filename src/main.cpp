@@ -70,7 +70,7 @@ int main(void)
         multiplayerLoop(ticksPerFrame);
         break;
       case ENDGAME:
-        // endGameLoop(ticksPerFrame);
+        endGameLoop();
         break;
       default:
         break;

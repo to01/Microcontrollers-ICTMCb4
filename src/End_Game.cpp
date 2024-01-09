@@ -18,6 +18,7 @@ void showWinner()
     {
         tft.fillCircle(HEIGHT_CODEOPPONENT, (15 + RADIUS_CODEOPPONENT * 2) * (i + 1), RADIUS_CODEOPPONENT, gameColorsArray[colorCodeArray[i].currentGameColors].ILI9341Color);
     }
+    setGameState(ENDGAME);
 }
 
 // function to show the loser
@@ -36,4 +37,15 @@ void showLoser()
     {
         // code from opponent must be shown
     }
+    setGameState(ENDGAME);
+}
+
+void endGameLoop()
+{
+    static bool previousC = Nunchuk.state.c_button;
+    if (Nunchuk.state.c_button && Nunchuk.state.c_button != previousC) // if the C-button went from released to pressed
+    {
+        setGameState(MENU);
+    }
+    previousC = Nunchuk.state.c_button;
 }
