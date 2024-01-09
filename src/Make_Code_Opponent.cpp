@@ -136,6 +136,7 @@ void codeOpponentLoop(const uint16_t ticksPerFrame)
         tft.print("Code succesfully received");
         colorCodeReceivedFromOpponent = recievedBits;
         recievedCodeFromOpponent = true;
+        bitsRead();
     }
 
     if (sentCodeToOpponent && recievedCodeFromOpponent)
