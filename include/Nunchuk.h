@@ -10,6 +10,8 @@
 #define ENCODED         0
 #define IDLEN		4 // bytes
 
+#define NUNCHUK_ADDRESS 0x52
+
 struct ncState {
 	uint8_t		joy_x_axis;
 	uint8_t		joy_y_axis;
