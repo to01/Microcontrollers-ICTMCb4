@@ -150,6 +150,7 @@ void recieveIR(void)
         currentRecieveStatus = initialZero;
         readCount = 0;
       }
+      readCount++;
     }
     break;
   case initialZero: // checks for 4.5ms 0
@@ -179,7 +180,7 @@ void recieveIR(void)
       currentBits |= previousValue;
       previousValue = getRecieverStatus();
     }
-    else if (readCount == TOGGLENUMBER)
+    else if (readCount >= TOGGLENUMBER)
     {
       readCount = 0;
       bitCount++;
@@ -216,7 +217,7 @@ ISR(TIMER0_COMPA_vect)
   {
     sendIR();
   }
-  else if (bitTurn >= DATALENGTH) // makes sure the IR emitter is off while idle
+  else
   {
     sendZero();
     if (recievingIR)
