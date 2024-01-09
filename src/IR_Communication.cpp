@@ -232,7 +232,7 @@ ISR(TIMER0_COMPA_vect)
 */
 bool sendBits(uint16_t bitsToSend)
 {
-  if (!sendingIR && !recievingIR)
+  if (!sendingIR/* && !recievingIR*/)
   {
     dataToSend = bitsToSend;
     bitTurn = 64;
