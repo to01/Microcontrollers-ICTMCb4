@@ -8,6 +8,8 @@ uint16_t colorCodeReceivedFromOpponent; // variable to store the color code rece
 
 uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
 
+Direction direction;
+
 // function to draw the playing field and initialize the color code
 void drawPlayingField()
 {
@@ -50,36 +52,38 @@ void drawPlayingField()
 // function to change the selected pin
 void selectPinMultiplayer()
 {
-    selectPinSpeed++;
-    if (selectPinSpeed > SELECTPINSPEED)
-    {
-        Nunchuk.getState(NUNCHUK_ADDRESS);  // get the state of the nunchuk
-        if (Nunchuk.state.joy_x_axis > 200) // if the joystick is moved to the right
-        {
-            if (currentPin < 3) // if the current pin is not the last pin
-            {
-                currentPin++;
-                blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
-            }
-            else // if the current pin is the last pin
-            {
-                currentPin = 3;
-            }
-        }
+    // selectPinSpeed++;
+    // if (selectPinSpeed > SELECTPINSPEED)
+    // {
 
-        if (Nunchuk.state.joy_x_axis < 50) // if the joystick is moved to the left
+    // Direction direction = getFilteredDirection();
+
+    if (direction == Right) // if the joystick is moved to the right
+    {
+        if (currentPin < 3) // if the current pin is not the last pin
         {
-            if (currentPin > 0) // if the current pin is not the first pin
-            {
-                currentPin--;
-                blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
-            }
-            else // if the current pin is the first pin
-            {
-                currentPin = 0;
-            }
+            currentPin++;
+            // blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
         }
-        selectPinSpeed = 0;
+        else // if the current pin is the last pin
+        {
+            currentPin = 3;
+        }
+    }
+
+    if (direction == Left) // if the joystick is moved to the left
+    {
+        if (currentPin > 0) // if the current pin is not the first pin
+        {
+            currentPin--;
+            // blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
+        }
+        else // if the current pin is the first pin
+        {
+            currentPin = 0;
+        }
+        // }
+        // selectPinSpeed = 0;
     }
     selectPinCount++;
 }
@@ -90,26 +94,26 @@ void changeColorPinMultiplayer()
     switch (currentPin)
     {
     case 0:
-        changeColorPin(currentPin);                                                                                                                                                                // change the color of the current pin
-        tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
+        changeColorPin(currentPin, direction); // change the color of the current pin
+        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
         break;
     case 1:
-        changeColorPin(currentPin);                                                                                                                                                                // change the color of the current pin
-        tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
+        changeColorPin(currentPin, direction); // change the color of the current pin
+        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
         break;
 
     case 2:
 
-        changeColorPin(currentPin);                                                                                                                                                                // change the color of the current pin
-        tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
+        changeColorPin(currentPin, direction); // change the color of the current pin
+        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
         break;
 
     case 3:
-        changeColorPin(currentPin);                                                                                                                                                                // change the color of the current pin
-        tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
+        changeColorPin(currentPin, direction); // change the color of the current pin
+        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
         break;
     }
-    changeColorCodeOpponentCount++;
+    countForBlinking++;
 }
 
 // function to draw the code
@@ -119,7 +123,6 @@ void drawCodeMultiplayer()
     {
         tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * i, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[i].currentGameColors].ILI9341Color);
     }
-    blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
 }
 
 // function to draw the geuss from the opponent
@@ -151,16 +154,16 @@ void drawPreviousGuess()
 // function to input the code with a nunchukbutton
 void inputCodeMultiplayer()
 {
-    if (Nunchuk.state.z_button > 0)
+    static bool previousZ = Nunchuk.state.z_button;
+    if (Nunchuk.state.z_button && Nunchuk.state.z_button != previousZ) // if the Z-button went from released to pressed
     {
         storePreviousGuess();
         drawPreviousGuess();
         giveFeedbackGuess();
         sendBits(getColorCodeBinary()); // sends the guess to the opponent
         currentPin = 0;
-
-        blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
     }
+    previousZ = Nunchuk.state.z_button;
 }
 
 // function to check if the code is correct and to give feedback
@@ -300,6 +303,8 @@ void giveFeedbackGuessOpponent()
 // used for all multiplayerLoop logic
 void multiplayerLoop(const uint16_t ticksPerFrame)
 {
+    direction = getFilteredDirection();
+
     if (getNewRecievedBits())
     {
         bitsRead();
@@ -308,10 +313,9 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
         storePreviousGuessOpponent();
         drawGuessOpponent();
     }
+
     if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
     {
-        selectPinMultiplayer();
-
         ticksSinceLastUpdate = 0;
         fpsToSeconds++;
 
@@ -330,19 +334,30 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
         }
     }
 
-    if (selectPinCount > SELECTEDPINCOUNT)
-    {
-        changeColorPinMultiplayer();
-        inputCodeMultiplayer();
+    selectPinMultiplayer();
+    // changeColorPinMultiplayer();
+    changeColorPin(currentPin, direction);
+    inputCodeMultiplayer();
 
-        selectPinCount = 0;
-    }
+    // if (selectPinCount > SELECTEDPINCOUNT)
+    // {
+    // changeColorPinMultiplayer();
+    // inputCodeMultiplayer();
+    //     selectPinCount = 0;
+    // }
 
-    if (changeColorCodeOpponentCount > CHANGECOLORCODEOPPONENTCOUNT)
+    if (countForBlinking > COUNTFORBLINKING)
     {
-        drawCodeMultiplayer();
+        blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
         // drawGuessOpponent();
 
-        changeColorCodeOpponentCount = 0;
+        countForBlinking = 0;
+        countForDrawCurrentGuess++;
+    }
+
+    if (countForDrawCurrentGuess > 1)
+    {
+        drawCodeMultiplayer();
+        countForDrawCurrentGuess = 0;
     }
 }

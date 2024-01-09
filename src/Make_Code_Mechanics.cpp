@@ -4,6 +4,10 @@ uint8_t currentPin = 0; // current pin that is selected
 
 uint8_t changeColorCodeOpponentCount = 0; // used to change the color of the current pin
 
+uint8_t countForBlinking = 0; // used to blink the current pin
+
+uint8_t countForDrawCurrentGuess = 0; // used to blink the current pin
+
 uint8_t selectPinCount = 0; // used to select the pin
 
 uint8_t selectPinSpeed = 0; // used to select the pin
@@ -26,9 +30,11 @@ ColorCode colorCodeArray[4] = {
     ColorCode(GameColors(RED, ILI9341_RED), 0)};
 
 // function to change the color of the current pin
-void changeColorPin(uint8_t currentPin)
+void changeColorPin(uint8_t currentPin, Direction direction)
 {
-    if (getNunchukDirection() == Up)
+    // Direction direction = getFilteredDirection();
+
+    if (direction == Up)
     {
         if (colorCodeArray[currentPin].currentGameColors > 0)
         {
@@ -40,7 +46,7 @@ void changeColorPin(uint8_t currentPin)
         }
     }
 
-    if (getNunchukDirection() == Down)
+    if (direction == Down)
     {
         if (colorCodeArray[currentPin].currentGameColors < 7)
         {
@@ -52,6 +58,7 @@ void changeColorPin(uint8_t currentPin)
         }
     }
     colorCodeArray[currentPin].gameColors = gameColorsArray[colorCodeArray[currentPin].currentGameColors];
+    countForBlinking++;
 }
 
 // function to blink the current pin
