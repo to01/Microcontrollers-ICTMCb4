@@ -6,7 +6,7 @@ Queue previousGuessOpponentQueue = Queue(); // queue for the previous guesses fr
 
 uint16_t colorCodeReceivedFromOpponent; // variable to store the color code received from the opponent
 
-uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0};
+uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0}; // array to store the color code received from the opponent
 
 Direction direction;
 
@@ -52,18 +52,11 @@ void drawPlayingField()
 // function to change the selected pin
 void selectPinMultiplayer()
 {
-    // selectPinSpeed++;
-    // if (selectPinSpeed > SELECTPINSPEED)
-    // {
-
-    // Direction direction = getFilteredDirection();
-
     if (direction == Right) // if the joystick is moved to the right
     {
         if (currentPin < 3) // if the current pin is not the last pin
         {
             currentPin++;
-            // blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
         }
         else // if the current pin is the last pin
         {
@@ -76,44 +69,13 @@ void selectPinMultiplayer()
         if (currentPin > 0) // if the current pin is not the first pin
         {
             currentPin--;
-            // blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
         }
         else // if the current pin is the first pin
         {
             currentPin = 0;
         }
-        // }
-        // selectPinSpeed = 0;
     }
     selectPinCount++;
-}
-
-// function to display the new color of the current pin
-void changeColorPinMultiplayer()
-{
-    switch (currentPin)
-    {
-    case 0:
-        changeColorPin(currentPin, direction); // change the color of the current pin
-        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
-        break;
-    case 1:
-        changeColorPin(currentPin, direction); // change the color of the current pin
-        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
-        break;
-
-    case 2:
-
-        changeColorPin(currentPin, direction); // change the color of the current pin
-        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
-        break;
-
-    case 3:
-        changeColorPin(currentPin, direction); // change the color of the current pin
-        // tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[currentPin].currentGameColors].ILI9341Color); // draw the current pin
-        break;
-    }
-    countForBlinking++;
 }
 
 // function to draw the code
@@ -129,12 +91,10 @@ void drawCodeMultiplayer()
 void drawGuessOpponent()
 {
     for (uint8_t i = 0; i < previousGuessOpponentQueue.rear + 1; i++)
-    // for (uint8_t i = 0; i < 1; i++)
     {
         for (uint8_t j = 0; j < 4; j++)
         {
-            // tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXGUESS - STEPVALUE * j, STARTVALUEY + STEPVALUE * i, RADIUSPREVIOUSGEUSS, ILI9341_RED);
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXGUESS - STEPVALUE * j, STARTVALUEY + STEPVALUE * i, RADIUSPREVIOUSGEUSS, gameColorsArray[guessFromOpponentArray[j]].ILI9341Color);
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXGUESS - STEPVALUE * j, STARTVALUEY + STEPVALUE * i, RADIUSPREVIOUSGEUSS, gameColorsArray[guessFromOpponentArray[3 - j]].ILI9341Color);
         }
     }
 }
@@ -156,7 +116,7 @@ void inputCodeMultiplayer()
 {
     static bool previousZ = Nunchuk.state.z_button;
     if (Nunchuk.state.z_button && Nunchuk.state.z_button != previousZ) // if the Z-button went from released to pressed
-    {
+    {    
         storePreviousGuess();
         drawPreviousGuess();
         giveFeedbackGuess();
@@ -233,68 +193,65 @@ void giveFeedbackGuess()
 // function to draw the feedback from the opponent
 void giveFeedbackGuessOpponent()
 {
-    if (recievingIR)
+    guessFromOpponent = recievedBits;
+    setGuessFromOpponentToArray();
+
+    uint8_t feedbackArray[4] = {0, 0, 0, 0};
+    uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // array with with a count per color of the guess
+    uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // array with with a count per color of the code
+
+    // initialize the arrays
+    for (uint8_t i = 0; i < 4; i++)
     {
-        guessFromOpponent = recievedBits;
-        setGuessFromOpponentToArray();
+        colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
+        colorCountCode[colorCodeReceivedFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
+    }
 
-        uint8_t feedbackArray[4] = {0, 0, 0, 0};
-        uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // array with with a count per color of the guess
-        uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // array with with a count per color of the code
-
-        // initialize the arrays
-        for (uint8_t i = 0; i < 4; i++)
+    // checks if the color of the pin is correct
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
         {
-            colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
-            colorCountCode[colorCodeReceivedFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
+            feedbackArray[i] = 2; // set the feedback to correct
+            // decrease the count of the color in the arrays
+            colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
+            colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
         }
+    }
 
-        // checks if the color of the pin is correct
-        for (uint8_t i = 0; i < 4; i++)
+    // checks if the color of the pin is in the code but not on the right place
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        // if the pin is not correct
+        if (feedbackArray[i] != 2)
         {
-            if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+            for (uint8_t j = 0; j < 4; j++)
             {
-                feedbackArray[i] = 2; // set the feedback to correct
-                // decrease the count of the color in the arrays
-                colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
-                colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
-            }
-        }
-
-        // checks if the color of the pin is in the code but not on the right place
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            // if the pin is not correct
-            if (feedbackArray[i] != 2)
-            {
-                for (uint8_t j = 0; j < 4; j++)
+                if (colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCode[colorCodeArray[i].gameColors.colorCode] > 0)
                 {
-                    if (colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCode[colorCodeArray[i].gameColors.colorCode] > 0)
-                    {
-                        feedbackArray[i] = 1; // set the feedback to almost correct
-                        // decrease the count of the color in the arrays
-                        colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
-                        colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
-                    }
+                    feedbackArray[i] = 1; // set the feedback to almost correct
+                    // decrease the count of the color in the arrays
+                    colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
+                    colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
                 }
             }
         }
+    }
 
-        // draws the feedback
-        for (uint8_t i = 0; i < 4; i++)
+    // draws the feedback
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        if (feedbackArray[i] == 0)
         {
-            if (feedbackArray[i] == 0)
-            {
-                tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
-            }
-            else if (feedbackArray[i] == 1)
-            {
-                tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
-            }
-            else if (feedbackArray[i] == 2)
-            {
-                tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
-            }
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
+        }
+        else if (feedbackArray[i] == 1)
+        {
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
+        }
+        else if (feedbackArray[i] == 2)
+        {
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
         }
     }
 }
@@ -303,15 +260,16 @@ void giveFeedbackGuessOpponent()
 // used for all multiplayerLoop logic
 void multiplayerLoop(const uint16_t ticksPerFrame)
 {
-    direction = getFilteredDirection();
+    direction = getFilteredDirection(); // constant checks the direction of the joystick
 
-    if (getNewRecievedBits())
+    if (getNewRecievedBits()) // if there is a new guess form the opponent
     {
-        bitsRead();
-        guessFromOpponent = recievedBits;
+        bitsRead();                       // read the bits
+        guessFromOpponent = recievedBits; // set the recieved bits to the guess from the opponent
         setGuessFromOpponentToArray();
         storePreviousGuessOpponent();
         drawGuessOpponent();
+        giveFeedbackGuessOpponent();
     }
 
     if (ticksSinceLastUpdate > ticksPerFrame) // 100FPS
@@ -319,37 +277,28 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
         ticksSinceLastUpdate = 0;
         fpsToSeconds++;
 
-        if (gameSeconds > 0)
+        if (gameSeconds > 0) // if there is time left on the clock
         {
-            if (fpsToSeconds > FRAMESTOSECONDS)
+            if (fpsToSeconds > FRAMESTOSECONDS) // if 100 frames have passed
             {
                 gameSeconds--;
                 updateTimeMultiplayer(gameSeconds);
                 fpsToSeconds = 0;
             }
         }
-        else
+        else // if there is no time left on the clock
         {
             // showLoser();
         }
     }
 
     selectPinMultiplayer();
-    // changeColorPinMultiplayer();
     changeColorPin(currentPin, direction);
     inputCodeMultiplayer();
 
-    // if (selectPinCount > SELECTEDPINCOUNT)
-    // {
-    // changeColorPinMultiplayer();
-    // inputCodeMultiplayer();
-    //     selectPinCount = 0;
-    // }
-
     if (countForBlinking > COUNTFORBLINKING)
     {
-        blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS);
-        // drawGuessOpponent();
+        blinkCurrentPin(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * currentPin, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS); // blink on the current pin
 
         countForBlinking = 0;
         countForDrawCurrentGuess++;
@@ -357,7 +306,7 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
 
     if (countForDrawCurrentGuess > 1)
     {
-        drawCodeMultiplayer();
+        drawCodeMultiplayer(); // draws the current guess
         countForDrawCurrentGuess = 0;
     }
 }

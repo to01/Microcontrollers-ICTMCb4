@@ -26,8 +26,6 @@ void drawPlayingField(void); // function to draw the playing field
 
 void selectPinMultiplayer(void); // function to change the selected pin
 
-void changeColorPinMultiplayer(void); // function to change the color of the current pin
-
 void drawCodeMultiplayer(void); // function to draw the code
 
 void drawPreviousGuess(void); // function to draw the previous guesses
