@@ -94,7 +94,7 @@ void drawGuessOpponent()
     {
         for (uint8_t j = 0; j < 4; j++)
         {
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXGUESS - STEPVALUE * j, STARTVALUEY + STEPVALUE * i, RADIUSPREVIOUSGEUSS, gameColorsArray[guessFromOpponentArray[3 - j]].ILI9341Color);
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXGUESS - STEPVALUE * j, STARTVALUEY + STEPVALUE * i, RADIUSPREVIOUSGEUSS, previousGuessOpponentQueue.queue[i][3 - j]);
         }
     }
 }
@@ -116,7 +116,7 @@ void inputCodeMultiplayer()
 {
     static bool previousZ = Nunchuk.state.z_button;
     if (Nunchuk.state.z_button && Nunchuk.state.z_button != previousZ) // if the Z-button went from released to pressed
-    {    
+    {
         storePreviousGuess();
         drawPreviousGuess();
         giveFeedbackGuess();
@@ -193,9 +193,6 @@ void giveFeedbackGuess()
 // function to draw the feedback from the opponent
 void giveFeedbackGuessOpponent()
 {
-    guessFromOpponent = recievedBits;
-    setGuessFromOpponentToArray();
-
     uint8_t feedbackArray[4] = {0, 0, 0, 0};
     uint8_t colorCountGuessOpponent[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // array with with a count per color of the guess
     uint8_t colorCountCode[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // array with with a count per color of the code
@@ -204,13 +201,13 @@ void giveFeedbackGuessOpponent()
     for (uint8_t i = 0; i < 4; i++)
     {
         colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
-        colorCountCode[colorCodeReceivedFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
+        colorCountCode[guessFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
     }
 
     // checks if the color of the pin is correct
     for (uint8_t i = 0; i < 4; i++)
     {
-        if (colorCodeReceivedFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        if (guessFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
         {
             feedbackArray[i] = 2; // set the feedback to correct
             // decrease the count of the color in the arrays
@@ -243,15 +240,15 @@ void giveFeedbackGuessOpponent()
     {
         if (feedbackArray[i] == 0)
         {
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * (3 - i), STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_RED);
         }
         else if (feedbackArray[i] == 1)
         {
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * (3 - i), STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_YELLOW);
         }
         else if (feedbackArray[i] == 2)
         {
-            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * i, STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
+            tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * (3 - i), STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
         }
     }
 }
