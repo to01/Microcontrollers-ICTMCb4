@@ -303,9 +303,6 @@ void multiplayerLoop(const uint16_t ticksPerFrame)
     if (getNewRecievedBits())
     {
         bitsRead();
-        Serial.begin(9600);
-        Serial.println(recievedBits);
-        Serial.end();
         guessFromOpponent = recievedBits;
         setGuessFromOpponentToArray();
         storePreviousGuessOpponent();
