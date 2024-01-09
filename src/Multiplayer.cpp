@@ -6,7 +6,7 @@ Queue previousGuessOpponentQueue = Queue(); // queue for the previous guesses fr
 
 uint16_t colorCodeReceivedFromOpponent; // variable to store the color code received from the opponent
 
-uint8_t colorCodeReceivedFromOpponentArray[4] = {0, 0, 0, 0}; // array to store the color code received from the opponent
+uint8_t colorCodeReceivedFromOpponentArray[4]; // array to store the color code received from the opponent
 
 Direction direction;
 
@@ -45,8 +45,6 @@ void drawPlayingField()
     {
         tft.fillCircle(STARTVALUECURRENTGUESS + GAPCURRENTGEUSS * cg, VALUEYCURRENTGUESS, RADIUSCURRENTGUESS, gameColorsArray[colorCodeArray[cg].currentGameColors].ILI9341Color);
     }
-
-    setColorCodeReceivedFromOpponentToArray();
 }
 
 // function to change the selected pin
@@ -75,7 +73,6 @@ void selectPinMultiplayer()
             currentPin = 0;
         }
     }
-    selectPinCount++;
 }
 
 // function to draw the code
