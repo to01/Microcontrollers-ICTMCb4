@@ -42,5 +42,10 @@ void showLoser()
 
 void endGameLoop()
 {
-    setGameState(MENU);
+    Nunchuk.getState(0x52);
+    static bool previousC = Nunchuk.state.c_button;
+    if (Nunchuk.state.c_button && Nunchuk.state.c_button != previousC)
+    {
+        setGameState(MENU);
+    }
 }
