@@ -42,10 +42,5 @@ void showLoser()
 
 void endGameLoop()
 {
-    static bool previousC = Nunchuk.state.c_button;
-    if (Nunchuk.state.c_button && Nunchuk.state.c_button != previousC) // if the C-button went from released to pressed
-    {
-        setGameState(MENU);
-    }
-    previousC = Nunchuk.state.c_button;
+    setGameState(MENU);
 }
