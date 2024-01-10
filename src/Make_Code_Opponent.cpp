@@ -123,6 +123,10 @@ void codeOpponentLoop(const uint16_t ticksPerFrame)
         tft.setTextSize(1);
         tft.setRotation(1);
         tft.print("Code succesfully sent to opponent");
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            colorCodeForOpponentArray[i] = colorCodeArray[i].currentGameColors;
+        }
         sentCodeToOpponent = true;
     }
     previousZ = Nunchuk.state.z_button;
@@ -146,6 +150,8 @@ void codeOpponentLoop(const uint16_t ticksPerFrame)
             colorCodeArray[i].currentGameColors = 0;
             colorCodeArray[i].gameColors = gameColorsArray[0];
         }
+        recievedCodeFromOpponent = false;
+        sentCodeToOpponent = false;
         setColorCodeReceivedFromOpponentToArray();
         setGameState(GAMEMULTIPLAYER);
         drawPlayingField();

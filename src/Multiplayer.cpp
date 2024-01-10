@@ -197,19 +197,19 @@ void giveFeedbackGuessOpponent()
     // initialize the arrays
     for (uint8_t i = 0; i < 4; i++)
     {
-        colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]++;
-        colorCountCode[guessFromOpponentArray[i]]++; // moet de code worden die word verstuurd door de tegenstander en is ontvangen
+        colorCountGuessOpponent[guessFromOpponentArray[i]]++;
+        colorCountCode[colorCodeForOpponentArray[i]]++; 
     }
 
     // checks if the color of the pin is correct
     for (uint8_t i = 0; i < 4; i++)
     {
-        if (guessFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        if (guessFromOpponentArray[i] == colorCodeForOpponentArray[i])
         {
             feedbackArray[i] = 2; // set the feedback to correct
             // decrease the count of the color in the arrays
-            colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
-            colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
+            colorCountGuessOpponent[guessFromOpponentArray[i]]--;
+            colorCountCode[guessFromOpponentArray[i]]--;
         }
     }
 
@@ -221,12 +221,12 @@ void giveFeedbackGuessOpponent()
         {
             for (uint8_t j = 0; j < 4; j++)
             {
-                if (colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode] > 0 && colorCountCode[colorCodeArray[i].gameColors.colorCode] > 0)
+                if (colorCountGuessOpponent[guessFromOpponentArray[i]] > 0 && colorCountCode[guessFromOpponentArray[i]] > 0)
                 {
                     feedbackArray[i] = 1; // set the feedback to almost correct
                     // decrease the count of the color in the arrays
-                    colorCountGuessOpponent[colorCodeArray[i].gameColors.colorCode]--;
-                    colorCountCode[colorCodeArray[i].gameColors.colorCode]--;
+                    colorCountGuessOpponent[guessFromOpponentArray[i]]--;
+                    colorCountCode[guessFromOpponentArray[i]]--;
                 }
             }
         }
@@ -248,6 +248,7 @@ void giveFeedbackGuessOpponent()
             tft.fillCircle(ILI9341_TFTHEIGHT - STARTVALUEXFEEDBACK - STEPVALUEFEEDBACK * (3 - i), STARTVALUEY + STEPVALUE * previousGuessOpponentQueue.rear, RADIUSFEEDBACK, ILI9341_GREEN);
         }
     }
+    checkIfGuessedCodeOpponentIsCorrect();
 }
 
 // function repeatedly called by main loop
