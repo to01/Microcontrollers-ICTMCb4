@@ -150,7 +150,6 @@ void recieveIR(void)
         currentRecieveStatus = initialZero;
         readCount = 0;
       }
-      readCount++;
     }
     break;
   case initialZero: // checks for 4.5ms 0
@@ -180,7 +179,7 @@ void recieveIR(void)
       currentBits |= previousValue;
       previousValue = getRecieverStatus();
     }
-    else if (readCount >= TOGGLENUMBER)
+    else if (readCount == TOGGLENUMBER)
     {
       readCount = 0;
       bitCount++;
