@@ -35,7 +35,7 @@ void showLoser()
     tft.setRotation(0);
     for (uint8_t i = 0; i < 4; i++)
     {
-        // code from opponent must be shown
+        tft.fillCircle(HEIGHT_CODEOPPONENT, (15 + RADIUS_CODEOPPONENT * 2) * (i + 1), RADIUS_CODEOPPONENT, gameColorsArray[colorCodeReceivedFromOpponentArray[i]].ILI9341Color);
     }
     setGameState(ENDGAME);
 }
