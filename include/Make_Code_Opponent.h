@@ -14,7 +14,7 @@
 #define RADIUS_CODEOPPONENT 25  // radius of the pins
 #define HEIGHT_CODEOPPONENT 120 // height of the pins
 
-void changeColorCodeOpponent(void); // function to change the color of the current pin
+void changeColorCodeOpponent(Direction direction); // function to change the color of the current pin
 
 void selectPinCodeOpponent(void); // function to select the pin
 

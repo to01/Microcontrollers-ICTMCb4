@@ -1,5 +1,9 @@
 #include "Colorcode_Logic.h"
 
+uint16_t colorCodeForOpponent = 0; // variable to store the color code for the opponent
+
+uint8_t colorCodeForOpponentArray[4] = {0, 0, 0, 0}; // array used for the feedback displayed on screen
+
 uint8_t guessFromOpponentArray[4] = {0, 0, 0, 0}; // array to set every pin to the correct color
 
 uint16_t guessFromOpponent = 0; // variable to store the guess received from the opponent
@@ -87,17 +91,17 @@ void checkIfGuessedCodeIsCorrect()
 // function to check if the guessed code from the opponent is correct and give the win
 void checkIfGuessedCodeOpponentIsCorrect()
 {
-    uint8_t correctGuesses = 0;
+    uint8_t correctGuessesOpponent = 0;
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        if (guessFromOpponentArray[i] == colorCodeArray[i].gameColors.colorCode)
+        if (guessFromOpponentArray[i] == colorCodeForOpponentArray[i])
         {
-            correctGuesses++;
+            correctGuessesOpponent++;
         }
     }
 
-    if (correctGuesses == 4)
+    if (correctGuessesOpponent == 4)
     {
         showLoser();
     }

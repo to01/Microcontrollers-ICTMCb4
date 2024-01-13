@@ -17,13 +17,15 @@
 #define BLUE 0b0110
 #define PURPLE 0b0111
 
-#define SELECTEDPINCOUNT 25            // amount of times per 100fps the value of the joystick is read
-#define SELECTPINSPEED 50              // speed at which the pins are switched
-#define CHANGECOLORCODEOPPONENTCOUNT 3 // amount of times per selectedpincount the value of the joystick is red to change the color of a pin
+#define COUNTFORBLINKING 10              // count based on 100 fps to blink the currentpin every 0.5 seconds
 
 extern uint8_t currentPin; // current pin that is selected
 
 extern uint8_t changeColorCodeOpponentCount; // used to change the color of the current pin
+
+extern uint8_t countForBlinking; // used to blink the current pin
+
+extern uint8_t countForDrawCurrentGuess; // used to blink the current pin
 
 extern uint8_t selectPinCount; // used to select the pin
 
@@ -49,7 +51,7 @@ extern ColorCode colorCodeArray[4]; // data for the currentPin in the array
 
 extern Adafruit_ILI9341 tft; // define the tft screen
 
-void changeColorPin(uint8_t currentPin); // function to change the color of the current pin
+void changeColorPin(uint8_t currentPin, Direction direction); // function to change the color of the current pin
 
 void blinkCurrentPin(uint8_t valueXCurrentPin, uint16_t valueYCurrentPin, uint8_t valueRadiusCurrentPin); // function to blink the current pin
 

@@ -216,7 +216,7 @@ ISR(TIMER0_COMPA_vect)
   {
     sendIR();
   }
-  else if (bitTurn >= DATALENGTH) // makes sure the IR emitter is off while idle
+  else
   {
     sendZero();
     if (recievingIR)
@@ -232,7 +232,7 @@ ISR(TIMER0_COMPA_vect)
 */
 bool sendBits(uint16_t bitsToSend)
 {
-  if (!sendingIR && !recievingIR)
+  if (!sendingIR/* && !recievingIR*/)
   {
     dataToSend = bitsToSend;
     bitTurn = 64;
