@@ -25,6 +25,11 @@
 #define SELECT_YPOS 10     // distance to center the circle with the text
 #define SELECTION_RADIUS 3 // radius of selection circle
 
+//indexs for the menu's in the menuholder
+#define STARTMENU_INDEX 0
+#define GAMEMODEMENU_INDEX 1
+#define SINGLEPLAYERMENU_INDEX 2
+
 extern Adafruit_ILI9341 tft;
 
 // create a typedef that points to void functions

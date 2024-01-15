@@ -110,19 +110,19 @@ void switchMenuItems(Menu *menu, Direction direction)
 // functions called by menuItems VVV
 void goToStartMenu()
 {
-    menuHolder.selectedMenu = 0; // NOTE: DE-MAGIC THIS!
+    menuHolder.selectedMenu = STARTMENU_INDEX; 
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 void goToGameMenu()
 {
-    menuHolder.selectedMenu = 1; // NOTE: DE-MAGIC THIS!
+    menuHolder.selectedMenu = GAMEMODEMENU_INDEX; 
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
 void goToSingleplayerMenu()
 {
-    menuHolder.selectedMenu = 2; // NOTE: DE-MAGIC THIS!
+    menuHolder.selectedMenu = SINGLEPLAYERMENU_INDEX; 
     drawMenu(&menuHolder.MenuArray[menuHolder.selectedMenu]);
 }
 
